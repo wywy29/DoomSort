@@ -46,7 +46,7 @@ void quickSort(vector<int>& arr) {
 void runTest(function<void(vector<int>&)> sortFunction, int n) {
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<> distr(1, n); // generate random numbers between 1 and n
+    uniform_int_distribution<> distr(1, 10 * n); // generate random numbers between 1 and 10n
 
     vector<int> arr(n), copy(n);
 
@@ -55,11 +55,16 @@ void runTest(function<void(vector<int>&)> sortFunction, int n) {
         copy[i] = arr[i];
     }
 
+    cout << "Before sorting" << endl;
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+
     quickSort(arr);
     sort(copy.begin(), copy.end());
 
-    cout << (arr == copy ? "Passed" : "Failed") << endl;
+    cout << endl << endl << "After sorting" << endl;
     for (int i = 0; i < n; i++) cout << arr[i] << " ";
+
+    cout << endl << endl << (arr == copy ? "Passed" : "Failed") << endl;
 }
 
 

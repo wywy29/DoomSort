@@ -58,7 +58,7 @@ void runTest(function<void(vector<int>&)> sortFunction, int n) {
     cout << "Before sorting" << endl;
     for (int i = 0; i < n; i++) cout << arr[i] << " ";
 
-    quickSort(arr);
+    sortFunction(arr);
     sort(copy.begin(), copy.end());
 
     cout << endl << endl << "After sorting" << endl;

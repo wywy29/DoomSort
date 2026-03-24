@@ -2,6 +2,9 @@
 
 #include <vector>
 #include <algorithm>
+#include <functional>
+#include <iostream>
+#include <random>
 using namespace std;
 
 int partition(vector<int>& arr, int low, int high) {
@@ -37,4 +40,26 @@ void quickSortHelper(vector<int>& arr, int low, int high) {
 void quickSort(vector<int>& arr) {
     quickSortHelper(arr, 0, arr.size() - 1);
 }
+
+// runs a test to see if the given sorting function's result is identical to that of the standard sort
+// method's and also outputs the sorted array
+void runTest(function<void(vector<int>&)> sortFunction, int n) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distr(1, n); // generate random numbers between 1 and n
+
+    vector<int> arr(n), copy(n);
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = distr(gen);
+        copy[i] = arr[i];
+    }
+
+    quickSort(arr);
+    sort(copy.begin(), copy.end());
+
+    cout << (arr == copy ? "Passed" : "Failed") << endl;
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+}
+
 

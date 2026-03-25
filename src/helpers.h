@@ -38,7 +38,7 @@ void augmentDataUsingNoise(vector<float>& numbers, int newSize) {
         if (randomValue > 24.f)
             randomValue = 24.f;
 
-        numbers.push_back(randomValue);
+        numbers.push_back(round(randomValue * 10.f) / 10.f); // round to 1 decimal places
     }
 }
 

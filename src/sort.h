@@ -7,11 +7,11 @@
 #include <random>
 using namespace std;
 
-int partition(vector<int>& arr, int low, int high) {
+int partition(vector<float>& arr, int low, int high) {
     int mid = low + (high - low) / 2;
     swap(arr[low], arr[mid]);
 
-    int pivot = arr[low];
+    float pivot = arr[low];
     int i = low, j = high;
 
     while (true) {
@@ -28,7 +28,7 @@ int partition(vector<int>& arr, int low, int high) {
     }
 }
 
-void quickSortHelper(vector<int>& arr, int low, int high) {
+void quickSortHelper(vector<float>& arr, int low, int high) {
     if (low < high) {
         int p = partition(arr, low, high);
 
@@ -37,18 +37,18 @@ void quickSortHelper(vector<int>& arr, int low, int high) {
     }
 }
 
-void quickSort(vector<int>& arr) {
+void quickSort(vector<float>& arr) {
     quickSortHelper(arr, 0, arr.size() - 1);
 }
 
 // runs a test to see if the given sorting function's result is identical to that of the standard sort
 // method's and also outputs the sorted array
-void runTest(function<void(vector<int>&)> sortFunction, int n) {
+void runTest(function<void(vector<float>&)> sortFunction, int n) {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> distr(1, 10 * n); // generate random numbers between 1 and 10n
 
-    vector<int> arr(n), copy(n);
+    vector<float> arr(n), copy(n);
 
     for (int i = 0; i < n; i++) {
         arr[i] = distr(gen);
@@ -64,7 +64,7 @@ void runTest(function<void(vector<int>&)> sortFunction, int n) {
     cout << endl << endl << "After sorting" << endl;
     for (int i = 0; i < n; i++) cout << arr[i] << " ";
 
-    cout << endl << endl << (arr == copy ? "Passed" : "Failed") << endl;
+    cout << endl << endl << "Test " << (arr == copy ? "passed" : "failed") << endl;
 }
 
 

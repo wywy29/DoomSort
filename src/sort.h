@@ -41,8 +41,9 @@ void quickSort(vector<float>& arr) {
     quickSortHelper(arr, 0, arr.size() - 1);
 }
 
-// runs a test to see if the given sorting function's result is identical to that of the standard sort
-// method's and also outputs the sorted array
+/// @brief Runs a test on both quick and merge sort functions to check if they work. Note that the tests must be called in main() with the appropriate function names.
+/// @param sortFunction the name of the sorting function with the exact same signature
+/// @param n number of elements you want in the array that's used to test your function
 void runTest(function<void(vector<float>&)> sortFunction, int n) {
     random_device rd;
     mt19937 gen(rd());

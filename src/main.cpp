@@ -29,7 +29,17 @@ int main() {
     }
 
     augmentDataUsingNoise(data, 100000);
-    for (float& x : data) cout << x << " ";
+    //for (float& x : data) cout << x << " "; //Print the 100,000 data (10,000 read and the rest augmented)
+
+    //Dylan :)
+
+    //Create a new vector containing reduced number of data points (100,000 to 100)
+    //Done for blobs
+    vector<float> resizedData;
+    int reducedSize = 100;
+
+    //Call resize function to reduce dataset and add to above vector
+    resize(resizedData, reducedSize);
 
     return 0;
 }

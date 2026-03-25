@@ -7,7 +7,7 @@ int main() {
     // runTest(quickSort, 100); // a quick test to see if quickSort() works or not
 
     vector<float> data;
-    data.reserve(100000); // reserve space for 100000 data points to prevent constant resizing
+    data.reserve(10000); // reserve space for 10000 data points to prevent constant resizing
     ifstream file("../resources/mobile_phone_screen_time_dataset.csv");
 
     if (!file.is_open()) {
@@ -28,6 +28,7 @@ int main() {
         data.push_back(stof(screentimeStr));
     }
 
+    augmentDataUsingNoise(data, 100000);
     for (float& x : data) cout << x << " ";
 
     return 0;

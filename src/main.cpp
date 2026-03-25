@@ -31,7 +31,8 @@ int main() {
     augmentDataUsingNoise(data, 100000);
     //for (float& x : data) cout << x << " "; //Print the 100,000 data (10,000 read and the rest augmented)
 
-    //Dylan :)
+    //Note from Dylan: The daily screen time ranges from 0-13.1 hours, I don't think its a problem
+    //because you would probably suffer a lot of consequences for using a device for a little over 13 hours lol
 
     //Create a new vector containing reduced number of data points (100,000 to 100)
     //Done for blobs
@@ -39,7 +40,7 @@ int main() {
     int reducedSize = 100;
 
     //Call resize function to reduce dataset and add to above vector
-    resize(resizedData, reducedSize);
+    resize(resizedData, data, reducedSize);
 
     return 0;
 }

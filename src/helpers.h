@@ -43,6 +43,8 @@ void augmentDataUsingNoise(vector<float>& numbers, int newSize) {
 }
 
 //Resize function to reduce dataset from 100,000 to 100 for a new vector
-void resize(vector<float>& newVector, int newSize) {
-    //Dylan: Will be written :)
+void resize(vector<float>& newVector, const vector<float>& data, int newSize) {
+    /*for (int i = 0; i < newSize; i++) {
+
+    }*/
 }

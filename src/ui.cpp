@@ -20,24 +20,6 @@ void fadeOutEffect(sf::RenderWindow& window) {
         sf::sleep(sf::milliseconds(30));
     }
 }
-// second half of the transition, WIP/prob not needed
-void fadeInEffect(sf::RenderWindow& window) {
-    sf::Texture currentWin(window.getSize());
-    currentWin.update(window);
-
-    sf::Sprite screen(currentWin);
-
-    sf::RectangleShape fade(sf::Vector2f(window.getSize()));
-
-    for (int i = 255; i >= 0; i -= 15) {
-        fade.setFillColor(sf::Color(0, 0, 0, i));
-        window.clear();
-        window.draw(screen);
-        window.draw(fade);
-        window.display();
-        sf::sleep(sf::milliseconds(30));
-    }
-}
 
 bool HomeScreenUI::show(sf::RenderWindow& window) {
 
@@ -121,22 +103,39 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         return;
     }
 
+    // the text at the top of the program window
     sf::Text titleText(font);
     titleText.setString("DoomSort");
     titleText.setCharacterSize(45);
     titleText.setFillColor(sf::Color::White);
     auto res = titleText.getLocalBounds();
-    titleText.setPosition(sf::Vector2f((window.getSize().x - res.size.x) / 2, window.getSize().y / 27.f));
+    titleText.setPosition(sf::Vector2f((window.getSize().x - res.size.x) / 2.f, window.getSize().y / 27.f));
+
 
     auto windowSize = window.getSize();
 
     // info for the left box surrounding where user can input info
     sf::Vector2f userInputBoxSize(windowSize.x * 0.2f, windowSize.y * 0.8f);
     sf::RectangleShape userInputBox(userInputBoxSize);
-    userInputBox.setPosition({windowSize.x * .125f - userInputBoxSize.x / 2.f, (windowSize.y - userInputBoxSize.y) / 2.f + window.getSize().y / 36});
+    userInputBox.setPosition({windowSize.x * .125f - userInputBoxSize.x / 2.f, (windowSize.y - userInputBoxSize.y) / 2.f + window.getSize().y / 36.f});
     userInputBox.setFillColor(sf::Color::Black);
     userInputBox.setOutlineColor(sf::Color::White);
     userInputBox.setOutlineThickness(2);
+
+    // lets the user know what to input (top of left box)
+    // split into prompt1 and prompt2 to fit inside the left box
+    sf::Text prompt1(font);
+    sf::Text prompt2(font);
+    prompt1.setString("What is your average daily");
+    prompt2.setString("screen time on your phone?");
+    prompt1.setCharacterSize(20);
+    prompt2.setCharacterSize(20);
+    prompt1.setFillColor(sf::Color::White);
+    prompt2.setFillColor(sf::Color::White);
+    auto leftBoxPos = userInputBox.getPosition();
+    auto promptBounds = prompt1.getLocalBounds();
+    prompt1.setPosition({leftBoxPos.x + (userInputBoxSize.x - prompt1.getLocalBounds().size.x) / 2.f, leftBoxPos.y + window.getSize().y / 25.f});
+    prompt2.setPosition({leftBoxPos.x + (userInputBoxSize.x - prompt2.getLocalBounds().size.x) / 2.f, prompt1.getPosition().y + promptBounds.size.y + 4.f});
 
     // info for the right box surrounding the blobs
     sf::Vector2f blobBoundsSize(windowSize.x * 0.7f, windowSize.y * 0.8f);
@@ -145,6 +144,39 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     blobBounds.setOutlineColor(sf::Color::White);
     blobBounds.setFillColor(sf::Color::Black);
     blobBounds.setOutlineThickness(3);
+
+    // the hours and minutes boxes for the user to input their screen time (inside left box)
+    sf::RectangleShape userHours(sf::Vector2f(userInputBoxSize.x * .5f, 35.f));
+    sf::RectangleShape userMinutes(sf::Vector2f(userInputBoxSize.x * .5f, 35.f));
+
+    // lot of repetition so im making an x and y for the setPosition function
+    float inputX = leftBoxPos.x + (userInputBoxSize.x - userHours.getSize().x) / 2.f;
+    float inputY = prompt2.getPosition().y + prompt2.getLocalBounds().size.y + 20.f;
+
+    userHours.setPosition({inputX, inputY});
+    userMinutes.setPosition({inputX, inputY + window.getSize().y / 30});
+
+    // the text that lets user know what each box is for
+    sf::Text hoursLabel(font);
+    sf::Text minutesLabel(font);
+    hoursLabel.setString("hours");
+    minutesLabel.setString("minutes");
+    hoursLabel.setCharacterSize(14);
+    minutesLabel.setCharacterSize(14);
+    hoursLabel.setFillColor(sf::Color(128, 128, 128));
+    minutesLabel.setFillColor(sf::Color(128, 128, 128));
+    // the text of the user's input
+    sf::Text userHoursText(font);
+    sf::Text userMinutesText(font);
+    userHoursText.setString(hoursLabel.getString());
+    userMinutesText.setString(minutesLabel.getString());
+    userHoursText.setCharacterSize(14);
+    userMinutesText.setCharacterSize(14);
+    userHoursText.setFillColor(sf::Color::White);
+    userMinutesText.setFillColor(sf::Color::White);
+
+
+
 
 
 
@@ -159,6 +191,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         window.draw(titleText);
         window.draw(blobBounds);
         window.draw(userInputBox);
+        window.draw(prompt1);
+        window.draw(prompt2);
+        window.draw(userHours);
+        window.draw(userMinutes);
         window.display();
 
     }

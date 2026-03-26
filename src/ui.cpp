@@ -125,7 +125,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     titleText.setString("DoomSort");
     titleText.setCharacterSize(45);
     titleText.setFillColor(sf::Color::White);
-    titleText.setPosition(sf::Vector2f(window.getSize().x / 2, window.getSize().y / 1.1));
+    auto res = titleText.getLocalBounds();
+    titleText.setPosition(sf::Vector2f((window.getSize().x - res.size.x) / 2, window.getSize().y / 27.f));
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {

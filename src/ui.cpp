@@ -128,6 +128,27 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     auto res = titleText.getLocalBounds();
     titleText.setPosition(sf::Vector2f((window.getSize().x - res.size.x) / 2, window.getSize().y / 27.f));
 
+    auto windowSize = window.getSize();
+
+    // info for the left box surrounding where user can input info
+    sf::Vector2f userInputBoxSize(windowSize.x * 0.2f, windowSize.y * 0.8f);
+    sf::RectangleShape userInputBox(userInputBoxSize);
+    userInputBox.setPosition({windowSize.x * .125f - userInputBoxSize.x / 2.f, (windowSize.y - userInputBoxSize.y) / 2.f + window.getSize().y / 36});
+    userInputBox.setFillColor(sf::Color::Black);
+    userInputBox.setOutlineColor(sf::Color::White);
+    userInputBox.setOutlineThickness(2);
+
+    // info for the right box surrounding the blobs
+    sf::Vector2f blobBoundsSize(windowSize.x * 0.7f, windowSize.y * 0.8f);
+    sf::RectangleShape blobBounds(blobBoundsSize);
+    blobBounds.setPosition({windowSize.x * .63f - blobBoundsSize.x / 2.f, (windowSize.y - blobBoundsSize.y) / 2.f + window.getSize().y / 36});
+    blobBounds.setOutlineColor(sf::Color::White);
+    blobBounds.setFillColor(sf::Color::Black);
+    blobBounds.setOutlineThickness(3);
+
+
+
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()){
@@ -136,6 +157,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         }
         window.clear(sf::Color::Black);
         window.draw(titleText);
+        window.draw(blobBounds);
+        window.draw(userInputBox);
         window.display();
 
     }

@@ -26,7 +26,7 @@ bool HomeScreenUI::show() {
 
     // homescreen title font details
     sf::Text titleText(boldFont);
-    titleText.setString("DoomScroller");
+    titleText.setString("DoomSort");
     titleText.setCharacterSize(60);
     titleText.setFillColor(sf::Color::White);
     titleText.setStyle(sf::Text::Bold);

@@ -5,6 +5,8 @@
 #include <sstream>
 
 int main() {
+    //HomeScreenUI hs;
+    //hs.show(); // test homescreen
 
     // runTest(quickSort, 100); // a quick test to see if quickSort() works or not
 

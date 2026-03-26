@@ -4,13 +4,13 @@
 // simple home screen, will just contain a button to go to the actual project
 class HomeScreenUI {
     public:
-    HomeScreenUI();
-    bool show();
+    HomeScreenUI() = default;
+    bool show(sf::RenderWindow& window);
 };
 
 // actual project, will contain the blobs, buttons, popups, etc.
 class ProjectUI {
     public:
-    ProjectUI();
-    void drawWindow();
+    ProjectUI() = default;
+    void drawWindow(sf::RenderWindow& window);
 };

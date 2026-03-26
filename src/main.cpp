@@ -1,9 +1,11 @@
 #include "sort.h"
 #include "helpers.h"
+#include "ui.cpp"
 #include <fstream>
 #include <sstream>
 
 int main() {
+
     // runTest(quickSort, 100); // a quick test to see if quickSort() works or not
 
     vector<float> data;

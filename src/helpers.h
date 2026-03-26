@@ -42,9 +42,67 @@ void augmentDataUsingNoise(vector<float>& numbers, int newSize) {
     }
 }
 
-//Resize function to reduce dataset from 100,000 to 100 for a new vector
-void resize(vector<float>& newVector, const vector<float>& data, int newSize) {
-    /*for (int i = 0; i < newSize; i++) {
+//Resize function to reduce dataset from 100,000 to 100 for a new vector (using K-means clustering)
+//Source used as idea for implementing K-means clustering (using floats and vectors instead):
+//https://www.geeksforgeeks.org/machine-learning/k-means-clustering-introduction/
+void resize(vector<float>& newVector, const vector<float>& data, int k) {
+    //Get original data size (Note: For K-means clustering, blobs will be referred to as centroids)
+    int dataSize = data.size();
 
-    }*/
+    //Vector for cluster labels to group points together + Boolean which tells if any point switched cluster
+    vector<int> clusterLabels(dataSize, 0);
+    bool switchMade = true;
+
+    //Start by initializing centroids/blobs using the first k points
+    vector<float> centroids(k, 0.0f);
+    for(int i = 0; i < k; i++) {
+        centroids[i] = data[i];
+    }
+
+    //Loop until no switch is made for any point in any cluster (centroids no longer change)
+    while(switchMade == true) {
+        switchMade = false;
+
+        //Find the closest centroid for each point, assign point to corresponding cluster
+        for(int i = 0; i < dataSize; i++) {
+            float currMinDist = abs(data[i] - centroids[0]);
+            int currClosestCluster = 0;
+
+            for(int j = 1; j < k; j++) {
+                float currClusterDist = abs(data[i] - centroids[j]);
+
+                //If current distance of point from the current cluster is less than minimum distance, replace it
+                if(currClusterDist < currMinDist) {
+                    currClosestCluster = j;
+                    currMinDist = currClusterDist;
+                }
+            }
+
+            //Check if a switch is made for a point in a cluster
+            if(clusterLabels[i] != currClosestCluster) {
+                switchMade = true;
+                clusterLabels[i] = currClosestCluster;
+            }
+
+        }
+
+        //Update centroids, using cluster sum and point count, to be the average of newly assigned points
+        vector<float> clusterSum(k, 0.0f);
+        vector<int> clusterPointCount(k, 0);
+
+        for(int i = 0; i < dataSize; i++) {
+            int currLabel = clusterLabels[i];
+            clusterSum[currLabel] += data[i];
+            clusterPointCount[currLabel]++;
+        }
+
+        for(int j = 0; j < k; j++) {
+            if(clusterPointCount[j] != 0) {
+                centroids[j] = round((clusterSum[j] / static_cast<float>(clusterPointCount[j])) * 10.f) / 10.f; //one decimal place rounding
+            }
+        }
+    }
+
+    //New vector of 100 blobs will be stored as the centroids
+    newVector = centroids;
 }

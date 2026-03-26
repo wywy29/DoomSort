@@ -146,15 +146,21 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     blobBounds.setOutlineThickness(3);
 
     // the hours and minutes boxes for the user to input their screen time (inside left box)
-    sf::RectangleShape userHours(sf::Vector2f(userInputBoxSize.x * .5f, 35.f));
-    sf::RectangleShape userMinutes(sf::Vector2f(userInputBoxSize.x * .5f, 35.f));
+    sf::RectangleShape userHours(sf::Vector2f(userInputBoxSize.x * .4f, 35.f));
+    sf::RectangleShape userMinutes(sf::Vector2f(userInputBoxSize.x * .4f, 35.f));
 
     // lot of repetition so im making an x and y for the setPosition function
     float inputX = leftBoxPos.x + (userInputBoxSize.x - userHours.getSize().x) / 2.f;
     float inputY = prompt2.getPosition().y + prompt2.getLocalBounds().size.y + 20.f;
 
     userHours.setPosition({inputX, inputY});
-    userMinutes.setPosition({inputX, inputY + window.getSize().y / 30});
+    userMinutes.setPosition({inputX, inputY + window.getSize().y / 20});
+    userHours.setFillColor(sf::Color::Black);
+    userMinutes.setFillColor(sf::Color::Black);
+    userHours.setOutlineColor(sf::Color::White);
+    userMinutes.setOutlineColor(sf::Color::White);
+    userHours.setOutlineThickness(2);
+    userMinutes.setOutlineThickness(2);
 
     // the text that lets user know what each box is for
     sf::Text hoursLabel(font);
@@ -165,6 +171,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     minutesLabel.setCharacterSize(14);
     hoursLabel.setFillColor(sf::Color(128, 128, 128));
     minutesLabel.setFillColor(sf::Color(128, 128, 128));
+    hoursLabel.setPosition({inputX + window.getSize().x/ 32, inputY + window.getSize().x/200});
+    minutesLabel.setPosition({inputX + window.getSize().x / 35, inputY + window.getSize().y / 17 });
+
     // the text of the user's input
     sf::Text userHoursText(font);
     sf::Text userMinutesText(font);
@@ -195,6 +204,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         window.draw(prompt2);
         window.draw(userHours);
         window.draw(userMinutes);
+        window.draw(hoursLabel);
+        window.draw(minutesLabel);
         window.display();
 
     }

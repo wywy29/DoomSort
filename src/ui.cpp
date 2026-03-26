@@ -161,6 +161,11 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     userMinutes.setOutlineColor(sf::Color::White);
     userHours.setOutlineThickness(2);
     userMinutes.setOutlineThickness(2);
+    // determines if a box is clicked
+    bool hoursClicked = false;
+    bool minutesClicked = false;
+
+
 
     // the text that lets user know what each box is for
     sf::Text hoursLabel(font);
@@ -181,21 +186,132 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     userMinutesText.setString(minutesLabel.getString());
     userHoursText.setCharacterSize(14);
     userMinutesText.setCharacterSize(14);
-    userHoursText.setFillColor(sf::Color::White);
-    userMinutesText.setFillColor(sf::Color::White);
+    userHoursText.setPosition({inputX + window.getSize().x/ 32, inputY + window.getSize().x/200});
+    userMinutesText.setPosition({inputX + window.getSize().x / 35, inputY + window.getSize().y / 17 });
 
-
-
-
-
-
+    // what the user is typing into
+    std::string userHoursInput = "";
+    std::string userMinutesInput = "";
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()){
                 window.close();
             }
+
+            // change outline color of the user input boxes when clicked
+            if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
+                sf::Vector2f clickPos(click->position);
+                hoursClicked = userHours.getGlobalBounds().contains(clickPos);
+                minutesClicked = userMinutes.getGlobalBounds().contains(clickPos);
+                if (hoursClicked) {
+                    hoursClicked   = true;
+                    minutesClicked = false;
+                    userHours.setOutlineColor(sf::Color::Red);
+                    userMinutes.setOutlineColor(sf::Color::White);
+                }
+                else if (minutesClicked) {
+                    minutesClicked = true;
+                    hoursClicked   = false;
+                    userMinutes.setOutlineColor(sf::Color::Red);
+                    userHours.setOutlineColor(sf::Color::White);
+                }
+                else {
+                    hoursClicked   = false;
+                    minutesClicked = false;
+                    userHours.setOutlineColor(sf::Color::White);
+                    userMinutes.setOutlineColor(sf::Color::White);
+                }
+            }
+            // handles when the user inputs digits into the boxes
+            if (const auto* text = event->getIf<sf::Event::TextEntered>()) {
+                // 8 is backspace
+                if (text->unicode == 8) {
+                    if (hoursClicked && !userHoursInput.empty()) {
+                        userHoursInput.pop_back();
+                    }
+                    else if (minutesClicked && !userMinutesInput.empty()) {
+                        userMinutesInput.pop_back();
+                    }
+                }
+                else if (text->unicode >= '0' && text->unicode <= '9') {
+                    if (hoursClicked) {
+                        std::string hrs = userHoursInput + static_cast<char>(text->unicode);
+                        if (std::stoi(hrs) <= 24) {
+                            userHoursInput = hrs;
+                        }
+                    }
+                    else if (minutesClicked) {
+                        std::string mins = userMinutesInput + static_cast<char>(text->unicode);
+                        if (std::stoi(mins) <= 59) {
+                            userMinutesInput = mins;
+                        }
+                    }
+                }
+                if (userHoursInput.empty()) {
+                    userHoursText.setString("hours");
+                    userHoursText.setFillColor(sf::Color(128,128,128));
+                } else {
+                    userHoursText.setString(userHoursInput);
+                    userHoursText.setFillColor(sf::Color::White);
+                }
+
+                if (userMinutesInput.empty()) {
+                    userMinutesText.setString("minutes");
+                    userMinutesText.setFillColor(sf::Color(128,128,128));
+                } else {
+                    userMinutesText.setString(userMinutesInput);
+                    userMinutesText.setFillColor(sf::Color::White);
+                }
+            }
         }
+
+        // make the labels disappear when mouse is clicked/hovered over it and changes color of user input boxes when mouse is hovered
+        sf::Vector2i pos = sf::Mouse::getPosition(window);
+        bool hoursHovered   = userHours.getGlobalBounds().contains(sf::Vector2f(pos));
+        bool minutesHovered = userMinutes.getGlobalBounds().contains(sf::Vector2f(pos));
+
+        if (hoursClicked) {
+            userHours.setOutlineColor(sf::Color::Red);
+        }
+        else if (hoursHovered) {
+            userHours.setOutlineColor(sf::Color(139,0,0));
+        }
+        else {
+            userHours.setOutlineColor(sf::Color::White);
+        }
+        if (minutesClicked) {
+            userMinutes.setOutlineColor(sf::Color::Red);
+        }
+        else if (minutesHovered) {
+            userMinutes.setOutlineColor(sf::Color(139,0,0));
+        }
+        else {
+            userMinutes.setOutlineColor(sf::Color::White);
+        }
+        if (userHoursInput.empty()) {
+            if (hoursClicked || hoursHovered) {
+                userHoursText.setFillColor(sf::Color(0,0,0,0));
+            }
+            else {
+                userHoursText.setFillColor(sf::Color(128,128,128));
+            }
+        }
+        else {
+            userHoursText.setFillColor(sf::Color::White);
+        }
+        if (userMinutesInput.empty()) {
+            if (minutesClicked || minutesHovered) {
+                userMinutesText.setFillColor(sf::Color(0,0,0,0));
+            }
+            else {
+                userMinutesText.setFillColor(sf::Color(128,128,128));
+            }
+        }
+        else {
+            userMinutesText.setFillColor(sf::Color::White);
+        }
+
         window.clear(sf::Color::Black);
         window.draw(titleText);
         window.draw(blobBounds);
@@ -204,8 +320,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         window.draw(prompt2);
         window.draw(userHours);
         window.draw(userMinutes);
-        window.draw(hoursLabel);
-        window.draw(minutesLabel);
+        window.draw(userHoursText);
+        window.draw(userMinutesText);
         window.display();
 
     }

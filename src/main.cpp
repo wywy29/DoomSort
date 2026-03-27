@@ -6,7 +6,6 @@
 
 int main() {
     // runTest(quickSort, 100); // a quick test to see if quickSort() works or not
-
     // runTest(mergeSort, 100); // tests mergeSort()
 
     vector<float> data;
@@ -46,7 +45,7 @@ int main() {
     // test homescreenUI and projectUI
     auto x = 1067;
     auto y = 600;
-    sf::RenderWindow window(sf::VideoMode({x, y}), "DoomSort");
+    sf::RenderWindow window(sf::VideoMode({sf::Vector2u(x, y)}), "DoomSort");
     HomeScreenUI hs;
     ProjectUI proj;
     if (hs.show(window)) {

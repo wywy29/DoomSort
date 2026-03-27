@@ -55,7 +55,6 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
     titleText.setStyle(sf::Text::Bold);
 
     sf::Text captionText(regFont);
-    // lol
     captionText.setString("How brainrotted are you?");
     captionText.setCharacterSize(40);
     captionText.setFillColor(sf::Color::White);
@@ -385,7 +384,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         for (Blob& blob : blobs)
             window.draw(blob.shape);
 
-        if (hoursHovered || hoursClicked) { // when you hovered over the boxes, one of the boxes had its red-outlined edge get overlapped by the
+        if (hoursHovered || hoursClicked) { // when you hover over the boxes, one of the boxes had its red-outlined edge get overlapped by the
             window.draw(userMinutes); // other box's white outline
             window.draw(userHours); // doing this make it so that the box that is "active" or being interacted with is draw later so its red outlines are not overlapped by white lines
         } else {

@@ -107,6 +107,8 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
 }
 
 void ProjectUI::drawWindow(sf::RenderWindow& window) {
+    window.setFramerateLimit(60); // frames per second fixed so the the blobs move at the same veloctiy for everyone
+
     sf::Font font;
     if (!font.openFromFile("../resources/Iosevka_Charon/IosevkaCharon-Regular.ttf")) {
         std::cerr << "error" << std::endl;
@@ -225,12 +227,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         // randomly generate x- and y-coordinate values
         float x = minX + (float)(rand()) / float(RAND_MAX / (maxX - minX));
         float y = minY + (float)(rand()) / float(RAND_MAX / (maxY - minY));
-        // randomly give them velocity between -2 and 2
-        float vx = (rand() % 40 - 20) / 10.f;
-        float vy = (rand() % 40 - 20) / 10.f;
-        // making sure that no blobs stay stationary
-        if (vx == 0 && vy == 0)
-            vx = 1.f;
+        // randomly give them velocity between -1 and 1
+        float vx = (rand() % 401 - 200) / 100.f;
+        float vy = (rand() % 401 - 200) / 100.f;
+        // making sure that no blobs stay stationary or are too slow
+        if (abs(vx) < 0.1f) vx = vx < 0 ? -0.25f : 0.25f;
+        if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
         blobs.push_back(Blob(radius, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
     }
@@ -239,18 +241,6 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()){
                 window.close();
-            }
-
-            for (Blob& blob : blobs) {
-                blob.shape.move(blob.velocity);
-                sf::Vector2f pos = blob.shape.getPosition();
-                sf::Vector2f boxPos = blobBounds.getPosition();
-
-                if (pos.x <= boxPos.x || pos.x + 2 * radius >= boxPos.x + blobBoundsSize.x)
-                    blob.velocity.x *= -1; // horizontal bounce back
-
-                if (pos.y <= boxPos.y || pos.y + 2 * radius >= boxPos.y + blobBoundsSize.y)
-                    blob.velocity.y *= -1; // vertical bounce back
             }
 
             // change outline color of the user input boxes when clicked
@@ -341,7 +331,6 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         bool hoursHovered   = userHours.getGlobalBounds().contains(sf::Vector2f(pos));
         bool minutesHovered = userMinutes.getGlobalBounds().contains(sf::Vector2f(pos));
 
-
         if (hoursClicked) {
             userHours.setOutlineColor(sf::Color::Red);
         }
@@ -370,6 +359,18 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
             else {
                 userMinutes.setOutlineColor(sf::Color::White);
             }
+        }
+
+        for (Blob& blob : blobs) {
+            blob.shape.move(blob.velocity);
+            sf::Vector2f pos = blob.shape.getPosition();
+            sf::Vector2f boxPos = blobBounds.getPosition();
+
+            if (pos.x <= boxPos.x || pos.x + 2 * radius >= boxPos.x + blobBoundsSize.x)
+                blob.velocity.x *= -1; // horizontal bounce back
+
+            if (pos.y <= boxPos.y || pos.y + 2 * radius >= boxPos.y + blobBoundsSize.y)
+                blob.velocity.y *= -1; // vertical bounce back
         }
 
         window.clear(sf::Color::Black);

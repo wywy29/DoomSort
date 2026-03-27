@@ -7,7 +7,7 @@
 int main() {
     // x and y determine window size
     // test homescreenUI and projectUI
-    /*
+
     auto x = 1067;
     auto y = 600;
     sf::RenderWindow window(sf::VideoMode({x, y}), "DoomSort");
@@ -16,7 +16,7 @@ int main() {
     if (hs.show(window)) {
         proj.drawWindow(window);
     }
-    */
+
 
     // runTest(quickSort, 100); // a quick test to see if quickSort() works or not
 
@@ -59,6 +59,9 @@ int main() {
     for(float d : resizedData) {
         cout << d << endl;
     }
+
+    //Compilation command for program through command prompt:
+    //g++.exe main.cpp -o DoomSort -I"C:\SFML\include" -L"C:\SFML\lib" -lsfml-graphics -lsfml-window -lsfml-system
 
     return 0;
 }

@@ -7,7 +7,7 @@
 int main() {
     // x and y determine window size
     // test homescreenUI and projectUI
-
+    /*
     auto x = 1067;
     auto y = 600;
     sf::RenderWindow window(sf::VideoMode({x, y}), "DoomSort");
@@ -16,9 +16,11 @@ int main() {
     if (hs.show(window)) {
         proj.drawWindow(window);
     }
-
+    */
 
     // runTest(quickSort, 100); // a quick test to see if quickSort() works or not
+
+    // runTest(mergeSort, 100); // tests mergeSort()
 
     vector<float> data;
     data.reserve(10000); // reserve space for 10000 data points to prevent constant resizing

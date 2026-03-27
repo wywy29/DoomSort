@@ -80,7 +80,6 @@ void merge(vector<float>& arr, int left, int mid, int right) {
         j++;
         k++;
     }
-
 }
 
 void mergeSortHelper(vector<float>& arr, int left, int right) {

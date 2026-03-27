@@ -9,8 +9,7 @@ struct Blob {
     Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
         shape.setRadius(radius);
         shape.setPosition(pos);
-        this->velocity = velocity;
-        shape.setFillColor(sf::Color::White); // for now, all blobs are white
+        this->velocity = velocity; // its color will be added randomly later
     }
 };
 
@@ -34,7 +33,6 @@ void fadeOutEffect(sf::RenderWindow& window) {
 }
 
 bool HomeScreenUI::show(sf::RenderWindow& window) {
-
     sf::Font boldFont;
     // you guys can more fonts to the resources folder and change this font if you'd like
     if (!boldFont.openFromFile("../resources/Iosevka_Charon/IosevkaCharon-Bold.ttf")) {
@@ -234,7 +232,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         if (abs(vx) < 0.1f) vx = vx < 0 ? -0.25f : 0.25f;
         if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
+        int r = rand() % 256;
+        int g = rand() % 256;
+        int b = rand() % 256;
+
         blobs.push_back(Blob(radius, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
+        blobs.back().shape.setFillColor(sf::Color(r, g, b, 150));
     }
 
     while (window.isOpen()) {
@@ -397,6 +400,5 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         window.draw(minutesLabel);
 
         window.display();
-
     }
 }

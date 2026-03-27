@@ -1,7 +1,19 @@
-
 #include "ui.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+
+struct Blob {
+    sf::CircleShape shape;
+    sf::Vector2f velocity;
+
+    Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
+        shape.setRadius(radius);
+        shape.setPosition(pos);
+        this->velocity = velocity;
+        shape.setFillColor(sf::Color::White); // for now, all blobs are white
+    }
+};
+
 // transition between homescreen and project (only really works for black background to black background for now)
 void fadeOutEffect(sf::RenderWindow& window) {
     sf::Texture currentWin(window.getSize());
@@ -95,7 +107,6 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
 }
 
 void ProjectUI::drawWindow(sf::RenderWindow& window) {
-
     sf::Font font;
     if (!font.openFromFile("../resources/Iosevka_Charon/IosevkaCharon-Regular.ttf")) {
         std::cerr << "error" << std::endl;
@@ -109,7 +120,6 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     titleText.setFillColor(sf::Color::White);
     auto res = titleText.getLocalBounds();
     titleText.setPosition(sf::Vector2f((window.getSize().x - res.size.x) / 2.f, window.getSize().y / 27.f));
-
 
     auto windowSize = window.getSize();
 
@@ -166,8 +176,6 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     bool hoursClicked = false;
     bool minutesClicked = false;
 
-
-
     // the text that lets user know what each box is for
     sf::Text hoursLabel(font);
     sf::Text minutesLabel(font);
@@ -203,10 +211,46 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     std::string userHoursInput = "";
     std::string userMinutesInput = "";
 
+    // blobs
+    std::vector<Blob> blobs;
+    float radius = 10.f;
+    int blobCount = 100;
+
+    for (int i = 0; i < blobCount; i++) {
+        // calculate max and min x- and y-coordinate values
+        float minX = blobBounds.getPosition().x + 5.f;
+        float maxX = blobBounds.getPosition().x + blobBoundsSize.x - (radius * 2.f) - 5.f;
+        float minY = blobBounds.getPosition().y + 5.f;
+        float maxY = blobBounds.getPosition().y + blobBoundsSize.y - (radius * 2.f) - 5.f;
+        // randomly generate x- and y-coordinate values
+        float x = minX + (float)(rand()) / float(RAND_MAX / (maxX - minX));
+        float y = minY + (float)(rand()) / float(RAND_MAX / (maxY - minY));
+        // randomly give them velocity between -2 and 2
+        float vx = (rand() % 40 - 20) / 10.f;
+        float vy = (rand() % 40 - 20) / 10.f;
+        // making sure that no blobs stay stationary
+        if (vx == 0 && vy == 0)
+            vx = 1.f;
+
+        blobs.push_back(Blob(radius, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
+    }
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()){
                 window.close();
+            }
+
+            for (Blob& blob : blobs) {
+                blob.shape.move(blob.velocity);
+                sf::Vector2f pos = blob.shape.getPosition();
+                sf::Vector2f boxPos = blobBounds.getPosition();
+
+                if (pos.x <= boxPos.x || pos.x + 2 * radius >= boxPos.x + blobBoundsSize.x)
+                    blob.velocity.x *= -1; // horizontal bounce back
+
+                if (pos.y <= boxPos.y || pos.y + 2 * radius >= boxPos.y + blobBoundsSize.y)
+                    blob.velocity.y *= -1; // vertical bounce back
             }
 
             // change outline color of the user input boxes when clicked
@@ -332,6 +376,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         window.draw(titleText);
         window.draw(blobBounds);
         window.draw(userInputBox);
+
+        for (Blob& blob : blobs)
+            window.draw(blob.shape);
 
         if (hoursHovered || hoursClicked) { // when you hovered over the boxes, one of the boxes had its red-outlined edge get overlapped by the
             window.draw(userMinutes); // other box's white outline

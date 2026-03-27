@@ -65,7 +65,6 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
     auto buttonBounds = continueButton.getLocalBounds();
     continueButton.setPosition({(windowSize.x - buttonBounds.size.x) / 2.f, titleText.getPosition().y + res.size.y + windowSize.y/4});
 
-
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()){
@@ -145,16 +144,18 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     blobBounds.setFillColor(sf::Color::Black);
     blobBounds.setOutlineThickness(3);
 
+    sf::Vector2f boxSize(userInputBoxSize.x * 0.4f, 35.f); // size of the hours and minutes boxes
     // the hours and minutes boxes for the user to input their screen time (inside left box)
-    sf::RectangleShape userHours(sf::Vector2f(userInputBoxSize.x * .4f, 35.f));
-    sf::RectangleShape userMinutes(sf::Vector2f(userInputBoxSize.x * .4f, 35.f));
+    sf::RectangleShape userHours(boxSize);
+    sf::RectangleShape userMinutes(boxSize);
 
-    // lot of repetition so im making an x and y for the setPosition function
+
+    // lot of repetition so i'm making an x and y for the setPosition function
     float inputX = leftBoxPos.x + (userInputBoxSize.x - userHours.getSize().x) / 2.f;
     float inputY = prompt2.getPosition().y + prompt2.getLocalBounds().size.y + 20.f;
 
     userHours.setPosition({inputX, inputY});
-    userMinutes.setPosition({inputX, inputY + window.getSize().y / 20});
+    userMinutes.setPosition({inputX, inputY + boxSize.y  + 2.5f}); // the floating point value added at the end is the vertical gap between the two boxes
     userHours.setFillColor(sf::Color::Black);
     userMinutes.setFillColor(sf::Color::Black);
     userHours.setOutlineColor(sf::Color::White);

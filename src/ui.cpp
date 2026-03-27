@@ -172,22 +172,22 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     sf::Text minutesLabel(font);
     hoursLabel.setString("hours");
     minutesLabel.setString("minutes");
-    hoursLabel.setCharacterSize(14);
-    minutesLabel.setCharacterSize(14);
+    hoursLabel.setCharacterSize(17);
+    minutesLabel.setCharacterSize(17);
     hoursLabel.setFillColor(sf::Color(128, 128, 128));
     minutesLabel.setFillColor(sf::Color(128, 128, 128));
-    hoursLabel.setPosition({inputX + window.getSize().x/ 32, inputY + window.getSize().x/200});
-    minutesLabel.setPosition({inputX + window.getSize().x / 35, inputY + window.getSize().y / 17 });
+    hoursLabel.setPosition({inputX + window.getSize().x/ 19, inputY + window.getSize().x/200});
+    minutesLabel.setPosition({inputX + window.getSize().x / 23, inputY + window.getSize().y / 17 });
 
     // the text of the user's input
     sf::Text userHoursText(font);
     sf::Text userMinutesText(font);
-    userHoursText.setString(hoursLabel.getString());
-    userMinutesText.setString(minutesLabel.getString());
-    userHoursText.setCharacterSize(14);
-    userMinutesText.setCharacterSize(14);
-    userHoursText.setPosition({inputX + window.getSize().x/ 32, inputY + window.getSize().x/200});
-    userMinutesText.setPosition({inputX + window.getSize().x / 35, inputY + window.getSize().y / 17 });
+    userHoursText.setString("");
+    userMinutesText.setString("");
+    userHoursText.setCharacterSize(17);
+    userMinutesText.setCharacterSize(17);
+    userHoursText.setPosition({inputX + window.getSize().x/ 170, inputY + window.getSize().x/200});
+    userMinutesText.setPosition({inputX + window.getSize().x / 170, inputY + window.getSize().y / 17 });
 
     // what the user is typing into
     std::string userHoursInput = "";
@@ -237,19 +237,19 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
                 else if (text->unicode >= '0' && text->unicode <= '9') {
                     if (hoursClicked) {
                         std::string hrs = userHoursInput + static_cast<char>(text->unicode);
-                        if (std::stoi(hrs) <= 24) {
+                        if (std::stoi(hrs) <= 24 && hrs.size() <= 2 && !(hrs.size() == 1 && hrs[0] == '0')) {
                             userHoursInput = hrs;
                         }
                     }
                     else if (minutesClicked) {
                         std::string mins = userMinutesInput + static_cast<char>(text->unicode);
-                        if (std::stoi(mins) <= 59) {
+                        if (std::stoi(mins) <= 59 && mins.size() <= 2 && !(mins.size() == 1 && mins[0] == '0')) {
                             userMinutesInput = mins;
                         }
                     }
                 }
                 if (userHoursInput.empty()) {
-                    userHoursText.setString("hours");
+                    userHoursText.setString("");
                     userHoursText.setFillColor(sf::Color(128,128,128));
                 } else {
                     userHoursText.setString(userHoursInput);
@@ -257,7 +257,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
                 }
 
                 if (userMinutesInput.empty()) {
-                    userMinutesText.setString("minutes");
+                    userMinutesText.setString("");
                     userMinutesText.setFillColor(sf::Color(128,128,128));
                 } else {
                     userMinutesText.setString(userMinutesInput);
@@ -289,28 +289,6 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         else {
             userMinutes.setOutlineColor(sf::Color::White);
         }
-        if (userHoursInput.empty()) {
-            if (hoursClicked || hoursHovered) {
-                userHoursText.setFillColor(sf::Color(0,0,0,0));
-            }
-            else {
-                userHoursText.setFillColor(sf::Color(128,128,128));
-            }
-        }
-        else {
-            userHoursText.setFillColor(sf::Color::White);
-        }
-        if (userMinutesInput.empty()) {
-            if (minutesClicked || minutesHovered) {
-                userMinutesText.setFillColor(sf::Color(0,0,0,0));
-            }
-            else {
-                userMinutesText.setFillColor(sf::Color(128,128,128));
-            }
-        }
-        else {
-            userMinutesText.setFillColor(sf::Color::White);
-        }
 
         window.clear(sf::Color::Black);
         window.draw(titleText);
@@ -322,6 +300,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         window.draw(userMinutes);
         window.draw(userHoursText);
         window.draw(userMinutesText);
+        window.draw(hoursLabel);
+        window.draw(minutesLabel);
         window.display();
 
     }

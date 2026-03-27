@@ -5,19 +5,6 @@
 #include <sstream>
 
 int main() {
-    // x and y determine window size
-    // test homescreenUI and projectUI
-
-    auto x = 1067;
-    auto y = 600;
-    sf::RenderWindow window(sf::VideoMode({x, y}), "DoomSort");
-    HomeScreenUI hs;
-    ProjectUI proj;
-    if (hs.show(window)) {
-        proj.drawWindow(window);
-    }
-
-
     // runTest(quickSort, 100); // a quick test to see if quickSort() works or not
 
     // runTest(mergeSort, 100); // tests mergeSort()
@@ -54,6 +41,17 @@ int main() {
 
     //Call resize function to reduce dataset using K-means clustering and add to resizedData vector
     resize(resizedData, data, reducedSize);
+
+    // x and y determine window size
+    // test homescreenUI and projectUI
+    auto x = 1067;
+    auto y = 600;
+    sf::RenderWindow window(sf::VideoMode({x, y}), "DoomSort");
+    HomeScreenUI hs;
+    ProjectUI proj;
+    if (hs.show(window)) {
+        proj.drawWindow(window, resizedData);
+    }
 
     //Print resize function results
     for(float d : resizedData) {

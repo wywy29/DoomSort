@@ -5,8 +5,10 @@
 struct Blob {
     sf::CircleShape shape;
     sf::Vector2f velocity;
+    float radius;
 
     Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
+        this->radius = radius;
         shape.setRadius(radius);
         shape.setPosition(pos);
         this->velocity = velocity; // its color will be added randomly later
@@ -104,8 +106,8 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
     return false;
 }
 
-void ProjectUI::drawWindow(sf::RenderWindow& window) {
-    window.setFramerateLimit(60); // frames per second fixed so the the blobs move at the same veloctiy for everyone
+void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTimes) {
+    window.setFramerateLimit(60); // frames per second fixed so the blobs move at the same velocity for everyone
 
     sf::Font font;
     if (!font.openFromFile("../resources/Iosevka_Charon/IosevkaCharon-Regular.ttf")) {
@@ -213,10 +215,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
 
     // blobs
     std::vector<Blob> blobs;
-    float radius = 10.f;
-    int blobCount = 100;
 
-    for (int i = 0; i < blobCount; i++) {
+    for (int i = 0; i < screenTimes.size(); i++) {
+        float radius = screenTimes[i];
         // calculate max and min x- and y-coordinate values
         float minX = blobBounds.getPosition().x + 5.f;
         float maxX = blobBounds.getPosition().x + blobBoundsSize.x - (radius * 2.f) - 5.f;
@@ -369,10 +370,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
             sf::Vector2f pos = blob.shape.getPosition();
             sf::Vector2f boxPos = blobBounds.getPosition();
 
-            if (pos.x <= boxPos.x || pos.x + 2 * radius >= boxPos.x + blobBoundsSize.x)
+            if (pos.x <= boxPos.x || pos.x + 2 * blob.radius >= boxPos.x + blobBoundsSize.x)
                 blob.velocity.x *= -1; // horizontal bounce back
 
-            if (pos.y <= boxPos.y || pos.y + 2 * radius >= boxPos.y + blobBoundsSize.y)
+            if (pos.y <= boxPos.y || pos.y + 2 * blob.radius >= boxPos.y + blobBoundsSize.y)
                 blob.velocity.y *= -1; // vertical bounce back
         }
 

@@ -12,5 +12,5 @@ class HomeScreenUI {
 class ProjectUI {
     public:
     ProjectUI() = default;
-    void drawWindow(sf::RenderWindow& window);
+    void drawWindow(sf::RenderWindow& window, std::vector<float> screenTimes);
 };

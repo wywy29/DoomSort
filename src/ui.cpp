@@ -323,14 +323,22 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         window.draw(titleText);
         window.draw(blobBounds);
         window.draw(userInputBox);
+
+        if (hoursHovered || hoursClicked) { // when you hovered over the boxes, one of the boxes had its red-outlined edge get overlapped by the
+            window.draw(userMinutes); // other box's white outline
+            window.draw(userHours); // doing this make it so that the box that is "active" or being interacted with is draw later so its red outlines are not overlapped by white lines
+        } else {
+            window.draw(userHours);
+            window.draw(userMinutes);
+        }
+
         window.draw(prompt1);
         window.draw(prompt2);
-        window.draw(userHours);
-        window.draw(userMinutes);
         window.draw(userHoursText);
         window.draw(userMinutesText);
         window.draw(hoursLabel);
         window.draw(minutesLabel);
+
         window.display();
 
     }

@@ -60,5 +60,8 @@ int main() {
         cout << d << endl;
     }
 
+    //Compilation command for program through command prompt:
+    //g++.exe main.cpp -o DoomSort -I"C:\SFML\include" -L"C:\SFML\lib" -lsfml-graphics -lsfml-window -lsfml-system
+
     return 0;
 }

@@ -237,12 +237,14 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
                 else if (text->unicode >= '0' && text->unicode <= '9') {
                     if (hoursClicked) {
                         std::string hrs = userHoursInput + static_cast<char>(text->unicode);
+                        // prevents being able to put a num above 24 in hrs and prevents 0 from being a digit
                         if (std::stoi(hrs) <= 24 && hrs.size() <= 2 && !(hrs.size() == 1 && hrs[0] == '0')) {
                             userHoursInput = hrs;
                         }
                     }
                     else if (minutesClicked) {
                         std::string mins = userMinutesInput + static_cast<char>(text->unicode);
+                        // same thing as hrs, except for mins its maxed at 59
                         if (std::stoi(mins) <= 59 && mins.size() <= 2 && !(mins.size() == 1 && mins[0] == '0')) {
                             userMinutesInput = mins;
                         }

@@ -177,8 +177,17 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
     minutesLabel.setCharacterSize(17);
     hoursLabel.setFillColor(sf::Color(128, 128, 128));
     minutesLabel.setFillColor(sf::Color(128, 128, 128));
-    hoursLabel.setPosition({inputX + window.getSize().x/ 19, inputY + window.getSize().x/200});
-    minutesLabel.setPosition({inputX + window.getSize().x / 23, inputY + window.getSize().y / 17 });
+
+    auto hrBounds = hoursLabel.getLocalBounds();
+    hoursLabel.setOrigin({0, hrBounds.size.y / 2.f});
+    auto minBounds = minutesLabel.getLocalBounds();
+    minutesLabel.setOrigin({0, minBounds.size.y / 2.f});
+
+    hoursLabel.setPosition({userHours.getPosition().x + userHours.getSize().x * 0.5f,
+                               userHours.getPosition().y + userHours.getSize().y / 2.f});
+
+    minutesLabel.setPosition({userMinutes.getPosition().x + userMinutes.getSize().x * 0.5f,
+                              userMinutes.getPosition().y + userMinutes.getSize().y / 2.f});
 
     // the text of the user's input
     sf::Text userHoursText(font);

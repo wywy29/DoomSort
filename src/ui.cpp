@@ -204,6 +204,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
                 sf::Vector2f clickPos(click->position);
                 hoursClicked = userHours.getGlobalBounds().contains(clickPos);
                 minutesClicked = userMinutes.getGlobalBounds().contains(clickPos);
+
+                if (minutesClicked && userHoursInput == "24") // the minutes box won't turn red if 24 hours is input
+                    minutesClicked = false;
+
                 if (hoursClicked) {
                     hoursClicked   = true;
                     minutesClicked = false;
@@ -241,8 +245,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
                         if (std::stoi(hrs) <= 24 && hrs.size() <= 2 && !(hrs.size() == 1 && hrs[0] == '0')) {
                             userHoursInput = hrs;
 
-                            if (userHoursInput == "24") // if user enters 24 in the hours section, their minutes automatically becomes 0
+                            if (userHoursInput == "24") {
+                                // if user enters 24 in the hours section, their minutes automatically becomes 0
                                 userMinutesInput = "";
+                                userMinutesText.setString(""); // immediately after typing 24 hours, wipe the minutes section and make it unclickable
+                                minutesClicked = false;
+                            }
                         }
                     }
                     else if (minutesClicked) {
@@ -279,6 +287,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         bool hoursHovered   = userHours.getGlobalBounds().contains(sf::Vector2f(pos));
         bool minutesHovered = userMinutes.getGlobalBounds().contains(sf::Vector2f(pos));
 
+
         if (hoursClicked) {
             userHours.setOutlineColor(sf::Color::Red);
         }
@@ -288,14 +297,25 @@ void ProjectUI::drawWindow(sf::RenderWindow& window) {
         else {
             userHours.setOutlineColor(sf::Color::White);
         }
-        if (minutesClicked) {
-            userMinutes.setOutlineColor(sf::Color::Red);
-        }
-        else if (minutesHovered) {
-            userMinutes.setOutlineColor(sf::Color(139,0,0));
-        }
-        else {
-            userMinutes.setOutlineColor(sf::Color::White);
+
+        if (userHoursInput == "24") { // make the minutes box looked locked when hours entered is 24
+            userMinutes.setFillColor(sf::Color(60, 60, 60));
+            userMinutes.setOutlineColor(sf::Color(100, 100, 100));
+            minutesLabel.setFillColor(sf::Color(80, 80, 80));
+        } else {
+            // go back to normal if the minutes box is not locked
+            userMinutes.setFillColor(sf::Color::Black);
+            minutesLabel.setFillColor(sf::Color(128, 128, 128));
+
+            if (minutesClicked) {
+                userMinutes.setOutlineColor(sf::Color::Red);
+            }
+            else if (minutesHovered) {
+                userMinutes.setOutlineColor(sf::Color(139,0,0));
+            }
+            else {
+                userMinutes.setOutlineColor(sf::Color::White);
+            }
         }
 
         window.clear(sf::Color::Black);

@@ -207,15 +207,14 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     // the text that lets user know what each box is for
     sf::Text hoursLabel(font);
     sf::Text minutesLabel(font);
-    hoursLabel.setString("hours");
-    minutesLabel.setString("minutes");
+    hoursLabel.setString("h");
+    minutesLabel.setString("min");
     hoursLabel.setCharacterSize(17);
     minutesLabel.setCharacterSize(17);
     hoursLabel.setFillColor(sf::Color(128, 128, 128));
     minutesLabel.setFillColor(sf::Color(128, 128, 128));
 
     // DA MERGE SORT, QUICK SORT, AND RESET BUTTONS!
-
     sf::Vector2f sortBoxSizes(userInputBoxSize.x * 0.6f, 35.f);
 
     sf::RectangleShape quickSortBox(sortBoxSizes);

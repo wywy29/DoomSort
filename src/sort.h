@@ -5,30 +5,31 @@
 #include <functional>
 #include <iostream>
 #include <random>
+#include "ui.h"
 using namespace std;
 
-int partition(vector<float>& arr, int low, int high) {
+int partition(vector<Blob>& arr, int low, int high) {
     int mid = low + (high - low) / 2;
-    swap(arr[low], arr[mid]);
+    swap(arr[low].radius, arr[mid].radius);
 
-    float pivot = arr[low];
+    float pivot = arr[low].radius;
     int i = low, j = high;
 
     while (true) {
-        while (arr[i] < pivot) i++;
+        while (arr[i].radius < pivot) i++;
 
-        while (arr[j] > pivot) j--;
+        while (arr[j].radius > pivot) j--;
 
         if (i >= j) return j;
 
-        swap(arr[i], arr[j]);
+        swap(arr[i].radius, arr[j].radius);
 
         i++;
         j--;
     }
 }
 
-void quickSortHelper(vector<float>& arr, int low, int high) {
+void quickSortHelper(vector<Blob>& arr, int low, int high) {
     if (low < high) {
         int p = partition(arr, low, high);
 
@@ -37,21 +38,21 @@ void quickSortHelper(vector<float>& arr, int low, int high) {
     }
 }
 
-void quickSort(vector<float>& arr) {
+void quickSort(vector<Blob>& arr) {
     quickSortHelper(arr, 0, arr.size() - 1);
 }
 
-void merge(vector<float>& arr, int left, int mid, int right) {
+void merge(vector<Blob>& arr, int left, int mid, int right) {
     int leftHalf = mid - left + 1;
     int rightHalf = right - mid;
     vector<float> leftTemp(leftHalf);
     vector<float> rightTemp(rightHalf);
 
     for (int i = 0; i < leftHalf; i++) {
-        leftTemp[i] = arr[left + i];
+        leftTemp[i] = arr[left + i].radius;
     }
     for (int i = 0; i < rightHalf; i++) {
-        rightTemp[i] = arr[mid + i + 1];
+        rightTemp[i] = arr[mid + i + 1].radius;
     }
 
     int i = 0;
@@ -60,29 +61,29 @@ void merge(vector<float>& arr, int left, int mid, int right) {
 
     while (i < leftHalf && j < rightHalf) {
         if (leftTemp[i] <= rightTemp[j]) {
-            arr[k] = leftTemp[i];
+            arr[k].radius = leftTemp[i];
             i++;
         }
         else {
-            arr[k] = rightTemp[j];
+            arr[k].radius = rightTemp[j];
             j++;
         }
         k++;
     }
     while (i < leftHalf) {
-        arr[k] = leftTemp[i];
+        arr[k].radius = leftTemp[i];
         i++;
         k++;
     }
 
     while (j < rightHalf) {
-        arr[k] = rightTemp[j];
+        arr[k].radius = rightTemp[j];
         j++;
         k++;
     }
 }
 
-void mergeSortHelper(vector<float>& arr, int left, int right) {
+void mergeSortHelper(vector<Blob>& arr, int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
         mergeSortHelper(arr, left, mid);
@@ -91,7 +92,7 @@ void mergeSortHelper(vector<float>& arr, int left, int right) {
     }
 }
 
-void mergeSort(vector<float>& arr) {
+void mergeSort(vector<Blob>& arr) {
     mergeSortHelper(arr, 0, arr.size() - 1);
 }
 

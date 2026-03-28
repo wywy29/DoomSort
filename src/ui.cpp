@@ -13,7 +13,7 @@ Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
 
 struct Popup {
     sf::Text text;
-    bool shown; // popups should appear after sort, so if its sorted, the popups will be shown (true)
+    bool shown; // popup should appear after sort, so if its sorted, the popups will be shown (true)
 
     Popup(const sf::Font &font, std::string msg, sf::Vector2f pos) : text(font, msg, 16) {
         text.setFillColor(sf::Color::White);

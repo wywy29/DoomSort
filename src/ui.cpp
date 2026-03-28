@@ -194,7 +194,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     sf::RectangleShape quickSortBox(sortBoxSizes);
     sf::RectangleShape mergeSortBox(sortBoxSizes);
     quickSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/7.5f});
-    mergeSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/4.f});
+    mergeSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/4.6f});
     quickSortBox.setFillColor(sf::Color::Black);
     quickSortBox.setOutlineColor(sf::Color::White);
     mergeSortBox.setFillColor(sf::Color::Black);
@@ -206,13 +206,28 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     quickSortText.setString("QUICK SORT");
     quickSortText.setCharacterSize(17);
     quickSortText.setFillColor(sf::Color::White);
-    quickSortText.setPosition({inputX, inputY + boxSize.y + window.getSize().y/7.f});
+    quickSortText.setPosition({inputX+7.f, inputY + boxSize.y + window.getSize().y/6.8f});
 
     sf::Text mergeSortText(font);
     mergeSortText.setString("MERGE SORT");
     mergeSortText.setCharacterSize(17);
     mergeSortText.setFillColor(sf::Color::White);
-    mergeSortText.setPosition({inputX, inputY + boxSize.y + window.getSize().y/3.8f});
+    mergeSortText.setPosition({inputX+3.f, inputY + boxSize.y + window.getSize().y/4.35f});
+
+    // RESET BUTTON (should reset any inputs, outline color of the boxes, remove the user blob, and reset all blobs to float again)
+
+    sf::RectangleShape resetBox(sortBoxSizes);
+    resetBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/3.3f});
+    resetBox.setFillColor(sf::Color::Black);
+    resetBox.setOutlineColor(sf::Color::White);
+    resetBox.setOutlineThickness(2);
+
+    sf::Text resetText(font);
+    resetText.setString("RESET");
+    resetText.setCharacterSize(17);
+    resetText.setFillColor(sf::Color::White);
+    resetText.setPosition({inputX + 22.f, inputY + boxSize.y + window.getSize().y/3.18f});
+    bool resetClicked = false;
 
     auto hrBounds = hoursLabel.getLocalBounds();
     hoursLabel.setOrigin({0, hrBounds.size.y / 2.f});
@@ -301,6 +316,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                 minutesClicked = userMinutes.getGlobalBounds().contains(clickPos);
                 quickSortClicked = quickSortBox.getGlobalBounds().contains(clickPos);
                 mergeSortClicked = mergeSortBox.getGlobalBounds().contains(clickPos);
+                resetClicked = resetBox.getGlobalBounds().contains(clickPos);
 
                 if (!userHoursInput.empty() || !userMinutesInput.empty()) {
                     hasInput = true;
@@ -317,6 +333,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     minutesClicked = false;
                     quickSortClicked = false;
                     mergeSortClicked = false;
+                    resetClicked = false;
+                    resetBox.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::Red);
                     userMinutes.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
@@ -327,6 +345,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     hoursClicked   = false;
                     quickSortClicked = false;
                     mergeSortClicked = false;
+                    resetClicked = false;
+                    resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::Red);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
@@ -338,6 +358,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     hoursClicked = false;
                     minutesClicked = false;
                     mergeSortClicked = false;
+                    resetClicked = false;
+                    resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::Red);
@@ -348,23 +370,42 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
+                    resetClicked = false;
+                    resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::Red);
+                }
+                else if (resetClicked && hasInput) {
+                    mergeSortClicked = false;
+                    hoursClicked = false;
+                    minutesClicked = false;
+                    quickSortClicked = false;
+                    resetClicked = true;
+                    resetBox.setOutlineColor(sf::Color::Red);
+                    userMinutes.setOutlineColor(sf::Color::White);
+                    userHours.setOutlineColor(sf::Color::White);
+                    quickSortBox.setOutlineColor(sf::Color::White);
+                    mergeSortBox.setOutlineColor(sf::Color::White);
+
+                    userHoursInput = "";
+                    userMinutesInput = "";
+                    userHoursText.setString("");
+                    userMinutesText.setString("");
                 }
                 else {
                     hoursClicked = false;
                     minutesClicked = false;
                     mergeSortClicked = false;
                     quickSortClicked = false;
+                    resetClicked = false;
+                    resetBox.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
                 }
-
-
             }
             // handles when the user inputs digits into the boxes
             if (const auto* text = event->getIf<sf::Event::TextEntered>()) {
@@ -431,6 +472,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         bool minutesHovered = userMinutes.getGlobalBounds().contains(sf::Vector2f(pos));
         bool quickSortHovered = quickSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
         bool mergeSortHovered = mergeSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
+        bool resetHovered = resetBox.getGlobalBounds().contains(sf::Vector2f(pos));
 
         if (hoursClicked) {
             userHours.setOutlineColor(sf::Color::Red);
@@ -481,6 +523,16 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
             mergeSortBox.setOutlineColor(sf::Color::White);
         }
 
+        if (resetClicked) {
+            resetBox.setOutlineColor(sf::Color::Red);
+        }
+        else if (resetHovered) {
+            resetBox.setOutlineColor(sf::Color(139,0,0));
+        }
+        else {
+            resetBox.setOutlineColor(sf::Color::White);
+        }
+
 
         for (Blob& blob : blobs) {
             blob.shape.move(blob.velocity);
@@ -520,6 +572,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         window.draw(mergeSortBox);
         window.draw(quickSortText);
         window.draw(mergeSortText);
+        window.draw(resetBox);
+        window.draw(resetText);
 
         window.display();
     }

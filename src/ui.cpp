@@ -1,19 +1,15 @@
 #include "ui.h"
+#include "sort.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-struct Blob {
-    sf::CircleShape shape;
-    sf::Vector2f velocity;
-    float radius;
-
-    Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
-        this->radius = radius;
-        shape.setRadius(radius);
-        shape.setPosition(pos);
-        this->velocity = velocity; // its color will be added randomly later
-    }
-};
+//Blob constructor
+Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
+    this->radius = radius;
+    shape.setRadius(radius);
+    shape.setPosition(pos);
+    this->velocity = velocity;
+}
 
 struct Popup {
     sf::Text text;

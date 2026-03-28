@@ -14,3 +14,12 @@ class ProjectUI {
     ProjectUI() = default;
     void drawWindow(sf::RenderWindow& window, std::vector<float> screenTimes);
 };
+
+//Blob class declaration
+struct Blob {
+    sf::CircleShape shape;
+    sf::Vector2f velocity;
+    float radius;
+
+    Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity);
+};

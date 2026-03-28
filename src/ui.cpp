@@ -15,22 +15,41 @@ struct Blob {
     }
 };
 
+struct Popup {
+    sf::Text text;
+    bool shown; // popups should appear after sort, so if its sorted, the popups will be shown (true)
+
+    Popup(const sf::Font &font, std::string msg, sf::Vector2f pos) : text(font, msg, 16) {
+        text.setFillColor(sf::Color::White);
+        text.setPosition(pos);
+    }
+};
+
+
+
 sf::Color determineColor(float radius, int opacity) {
     // color blobs (neon-colors) based on their screen time/original radius values
     int r, g, b;
-    if (radius >= 0.0 && radius <= 1.0) { //Neon-Green: Excellent
+    if (radius >= 0.0 && radius <= 1.0) {
+        //Neon-Green: Excellent
         r = 50, g = 255, b = 25;
-    } else if (radius > 1.0 && radius <= 2.0) { //Neon-Cyan: Great
+    } else if (radius > 1.0 && radius <= 2.0) {
+        //Neon-Cyan: Great
         r = 0, g = 255, b = 255;
-    } else if (radius > 2.0 && radius <= 4.0) { //Neon-Blue: Good
+    } else if (radius > 2.0 && radius <= 4.0) {
+        //Neon-Blue: Good
         r = 25, g = 100, b = 255;
-    } else if (radius > 4.0 && radius <= 6.0) { //Neon-Pink: OK
+    } else if (radius > 4.0 && radius <= 6.0) {
+        //Neon-Pink: OK
         r = 255, g = 25, b = 150;
-    } else if (radius > 6.0 && radius <= 8.0) { //Neon-Yellow: Fair
+    } else if (radius > 6.0 && radius <= 8.0) {
+        //Neon-Yellow: Fair
         r = 255, g = 255, b = 0;
-    } else if (radius > 8.0 && radius <= 10.0) { //Neon-Orange: Bad/Poor
+    } else if (radius > 8.0 && radius <= 10.0) {
+        //Neon-Orange: Bad/Poor
         r = 255, g = 125, b = 0;
-    } else if (radius > 10.0) { //Neon-Red: Dangerous
+    } else if (radius > 10.0) {
+        //Neon-Red: Dangerous
         r = 255, g = 25, b = 25;
     }
 
@@ -49,7 +68,7 @@ sf::Vector2f getRandomVelocity() {
 }
 
 // transition between homescreen and project (only really works for black background to black background for now)
-void fadeOutEffect(sf::RenderWindow& window) {
+void fadeOutEffect(sf::RenderWindow &window) {
     sf::Texture currentWin(window.getSize());
     currentWin.update(window);
 
@@ -73,28 +92,25 @@ sf::CircleShape makeKeyDot(sf::Color color, float x, float y, float radius) {
     dot.setFillColor(color);
     // the first and second dot looking very out of place on the key compared to the other dots
     if (radius == 1.5f) {
-        dot.setPosition({x+5,y+5});
-    }
-    else if (radius == 2.5f) {
-        dot.setPosition({x+4, y+4});
-    }
-    else {
-    dot.setPosition({x,y});
+        dot.setPosition({x + 5, y + 5});
+    } else if (radius == 2.5f) {
+        dot.setPosition({x + 4, y + 4});
+    } else {
+        dot.setPosition({x, y});
     }
     return dot;
 }
 
-sf::Text keyLabel(const sf::Font& font, std::string txt, float x, float y) {
+sf::Text keyLabel(const sf::Font &font, std::string txt, float x, float y) {
     sf::Text text(font);
     text.setString(txt);
     text.setCharacterSize(14);
     text.setFillColor(sf::Color::White);
     text.setPosition({x + 6.f, y - 3.f});
     return text;
-
 }
 
-bool HomeScreenUI::show(sf::RenderWindow& window) {
+bool HomeScreenUI::show(sf::RenderWindow &window) {
     sf::Font boldFont;
     // you guys can more fonts to the resources folder and change this font if you'd like
     if (!boldFont.openFromFile("../resources/Iosevka_Charon/IosevkaCharon-Bold.ttf")) {
@@ -130,15 +146,20 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
     titleText.setPosition({(windowSize.x - res.size.x) / 2.f, (windowSize.y / 4.f) - (res.size.y / 2.f)});
 
     // positioning caption text in correct spot (right below title text)
-    captionText.setPosition({(windowSize.x - captionText.getLocalBounds().size.x) / 2.f, titleText.getPosition().y + res.size.y + windowSize.y/30});
+    captionText.setPosition({
+        (windowSize.x - captionText.getLocalBounds().size.x) / 2.f,
+        titleText.getPosition().y + res.size.y + windowSize.y / 30
+    });
 
     // positioning continue button in correct spot (decently below caption text)
     auto buttonBounds = continueButton.getLocalBounds();
-    continueButton.setPosition({(windowSize.x - buttonBounds.size.x) / 2.f, titleText.getPosition().y + res.size.y + windowSize.y/4});
+    continueButton.setPosition({
+        (windowSize.x - buttonBounds.size.x) / 2.f, titleText.getPosition().y + res.size.y + windowSize.y / 4
+    });
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()){
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
             }
 
@@ -150,11 +171,9 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
                     fadeOutEffect(window);
                     return true;
                 }
-            }
-            else {
+            } else {
                 continueButton.setFillColor(sf::Color::White);
             }
-
         }
         window.clear(sf::Color::Black);
         window.draw(titleText);
@@ -165,7 +184,7 @@ bool HomeScreenUI::show(sf::RenderWindow& window) {
     return false;
 }
 
-void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTimes) {
+void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTimes) {
     window.setFramerateLimit(60); // frames per second fixed so the blobs move at the same velocity for everyone
 
     sf::Font font;
@@ -185,11 +204,13 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     auto windowSize = window.getSize();
 
 
-
     // info for the left box surrounding where user can input info
     sf::Vector2f userInputBoxSize(windowSize.x * 0.2f, windowSize.y * 0.8f);
     sf::RectangleShape userInputBox(userInputBoxSize);
-    userInputBox.setPosition({windowSize.x * .125f - userInputBoxSize.x / 2.f, (windowSize.y - userInputBoxSize.y) / 2.f + window.getSize().y / 36.f});
+    userInputBox.setPosition({
+        windowSize.x * .125f - userInputBoxSize.x / 2.f,
+        (windowSize.y - userInputBoxSize.y) / 2.f + window.getSize().y / 36.f
+    });
     userInputBox.setFillColor(sf::Color::Black);
     userInputBox.setOutlineColor(sf::Color::White);
     userInputBox.setOutlineThickness(2);
@@ -208,13 +229,21 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     prompt2.setFillColor(sf::Color::White);
     auto leftBoxPos = userInputBox.getPosition();
     auto promptBounds = prompt1.getLocalBounds();
-    prompt1.setPosition({leftBoxPos.x + (userInputBoxSize.x - prompt1.getLocalBounds().size.x) / 2.f, leftBoxPos.y + window.getSize().y / 25.f});
-    prompt2.setPosition({leftBoxPos.x + (userInputBoxSize.x - prompt2.getLocalBounds().size.x) / 2.f, prompt1.getPosition().y + promptBounds.size.y + 4.f});
+    prompt1.setPosition({
+        leftBoxPos.x + (userInputBoxSize.x - prompt1.getLocalBounds().size.x) / 2.f,
+        leftBoxPos.y + window.getSize().y / 25.f
+    });
+    prompt2.setPosition({
+        leftBoxPos.x + (userInputBoxSize.x - prompt2.getLocalBounds().size.x) / 2.f,
+        prompt1.getPosition().y + promptBounds.size.y + 4.f
+    });
 
     // info for the right box surrounding the blobs
     sf::Vector2f blobBoundsSize(windowSize.x * 0.7f, windowSize.y * 0.8f);
     sf::RectangleShape blobBounds(blobBoundsSize);
-    blobBounds.setPosition({windowSize.x * .63f - blobBoundsSize.x / 2.f, (windowSize.y - blobBoundsSize.y) / 2.f + window.getSize().y / 36});
+    blobBounds.setPosition({
+        windowSize.x * .63f - blobBoundsSize.x / 2.f, (windowSize.y - blobBoundsSize.y) / 2.f + window.getSize().y / 36
+    });
     blobBounds.setOutlineColor(sf::Color::White);
     blobBounds.setFillColor(sf::Color::Black);
     blobBounds.setOutlineThickness(3);
@@ -230,7 +259,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     float inputY = prompt2.getPosition().y + prompt2.getLocalBounds().size.y + 20.f;
 
     userHours.setPosition({inputX, inputY});
-    userMinutes.setPosition({inputX, inputY + boxSize.y  + 2.5f}); // the floating point value added at the end is the vertical gap between the two boxes
+    userMinutes.setPosition({inputX, inputY + boxSize.y + 2.5f});
+    // the floating point value added at the end is the vertical gap between the two boxes
     userHours.setFillColor(sf::Color::Black);
     userMinutes.setFillColor(sf::Color::Black);
     userHours.setOutlineColor(sf::Color::White);
@@ -256,8 +286,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
     sf::RectangleShape quickSortBox(sortBoxSizes);
     sf::RectangleShape mergeSortBox(sortBoxSizes);
-    quickSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/7.5f});
-    mergeSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/4.6f});
+    quickSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y / 7.5f});
+    mergeSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y / 4.6f});
     quickSortBox.setFillColor(sf::Color::Black);
     quickSortBox.setOutlineColor(sf::Color::White);
     mergeSortBox.setFillColor(sf::Color::Black);
@@ -269,18 +299,18 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     quickSortText.setString("QUICK SORT");
     quickSortText.setCharacterSize(17);
     quickSortText.setFillColor(sf::Color::White);
-    quickSortText.setPosition({inputX+7.f, inputY + boxSize.y + window.getSize().y/6.8f});
+    quickSortText.setPosition({inputX + 7.f, inputY + boxSize.y + window.getSize().y / 6.8f});
 
     sf::Text mergeSortText(font);
     mergeSortText.setString("MERGE SORT");
     mergeSortText.setCharacterSize(17);
     mergeSortText.setFillColor(sf::Color::White);
-    mergeSortText.setPosition({inputX+3.f, inputY + boxSize.y + window.getSize().y/4.35f});
+    mergeSortText.setPosition({inputX + 3.f, inputY + boxSize.y + window.getSize().y / 4.35f});
 
     // RESET BUTTON (should reset any inputs, outline color of the boxes, remove the user blob, and reset all blobs to float again)
 
     sf::RectangleShape resetBox(sortBoxSizes);
-    resetBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/3.3f});
+    resetBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y / 3.3f});
     resetBox.setFillColor(sf::Color::Black);
     resetBox.setOutlineColor(sf::Color::White);
     resetBox.setOutlineThickness(2);
@@ -289,7 +319,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     resetText.setString("RESET");
     resetText.setCharacterSize(17);
     resetText.setFillColor(sf::Color::White);
-    resetText.setPosition({inputX + 22.f, inputY + boxSize.y + window.getSize().y/3.18f});
+    resetText.setPosition({inputX + 22.f, inputY + boxSize.y + window.getSize().y / 3.18f});
     bool resetClicked = false;
 
     // legend for what each color represents
@@ -303,7 +333,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     std::vector<sf::Text> keyDotLabels;
 
     float keyStartingY = resetBox.getPosition().y + 60.f;
-    std::vector<std::pair<sf::Color, std::string>> keyItems = {
+    std::vector<std::pair<sf::Color, std::string> > keyItems = {
         {sf::Color(50, 255, 25, 155), "0-1 hr"},
         {sf::Color(0, 255, 255, 155), "1-2 hrs"},
         {sf::Color(25, 100, 255, 155), "2-4 hrs"},
@@ -320,9 +350,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         keyDots.push_back(makeKeyDot(keyItems[i].first, keyX, dotY, dotsRadii[i]));
         keyDotLabels.push_back(keyLabel(font, keyItems[i].second, keyX + keyXOffset, dotY));
     }
-    for (int i = 4; i < (int)keyItems.size(); i++) {
+    for (int i = 4; i < (int) keyItems.size(); i++) {
         float secondColumnX = keyX + sortBoxSizes.x / 1.5f;
-        float dotY = keyStartingY + (i-4) * keyYOffset;
+        float dotY = keyStartingY + (i - 4) * keyYOffset;
         keyDots.push_back(makeKeyDot(keyItems[i].first, secondColumnX, dotY, dotsRadii[i]));
         keyDotLabels.push_back(keyLabel(font, keyItems[i].second, secondColumnX + keyXOffset, dotY));
     }
@@ -352,7 +382,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     // lets us know if quick sort or merge sort box is clicked, so we can have it highlighted
     bool quickSortClicked = false;
     bool mergeSortClicked = false;
-    bool hasInput = false; // determines if the user input boxes have inputs, to determine if the sort boxes can be clicked or not
+    bool hasInput = false;
+    // determines if the user input boxes have inputs, to determine if the sort boxes can be clicked or not
 
     // what the user is typing into
     std::string userHoursInput = "";
@@ -369,8 +400,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         float minY = blobBounds.getPosition().y + 5.f;
         float maxY = blobBounds.getPosition().y + blobBoundsSize.y - (radius * 2.f) - 5.f;
         // randomly generate x- and y-coordinate values
-        float x = minX + (float)(rand()) / float(RAND_MAX / (maxX - minX));
-        float y = minY + (float)(rand()) / float(RAND_MAX / (maxY - minY));
+        float x = minX + (float) (rand()) / float(RAND_MAX / (maxX - minX));
+        float y = minY + (float) (rand()) / float(RAND_MAX / (maxY - minY));
 
         //Add blob to vector
         blobs.push_back(Blob(radius + 3.5, sf::Vector2f(x, y), getRandomVelocity()));
@@ -382,7 +413,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     bool submitClicked = false;
     sf::Vector2f submitSize(userInputBoxSize.x * 0.3f, 20.f);
     sf::RectangleShape submitBox(submitSize);
-    submitBox.setPosition({inputX + (boxSize.x - submitSize.x) / 2.f, userMinutes.getPosition().y + userMinutes.getSize().y / 2.f + 27.5f});
+    submitBox.setPosition({
+        inputX + (boxSize.x - submitSize.x) / 2.f, userMinutes.getPosition().y + userMinutes.getSize().y / 2.f + 27.5f
+    });
     submitBox.setFillColor(sf::Color::Black);
     submitBox.setOutlineColor(sf::Color::White);
     submitBox.setOutlineThickness(2);
@@ -394,17 +427,22 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
     auto subBounds = submitText.getLocalBounds();
     submitText.setOrigin({subBounds.size.x / 2.f, subBounds.size.y / 2.f + subBounds.position.y});
-    submitText.setPosition({submitBox.getPosition().x + submitBox.getSize().x / 2.f,
-                               submitBox.getPosition().y + submitBox.getSize().y / 2.f});
+    submitText.setPosition({
+        submitBox.getPosition().x + submitBox.getSize().x / 2.f,
+        submitBox.getPosition().y + submitBox.getSize().y / 2.f
+    });
+
+    std::vector<Popup> popups;
+
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()){
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
             }
 
             // change outline color of the user input boxes when clicked
-            if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
+            if (const auto *click = event->getIf<sf::Event::MouseButtonPressed>()) {
                 sf::Vector2f clickPos(click->position);
                 submitClicked = submitBox.getGlobalBounds().contains(clickPos);
                 hoursClicked = userHours.getGlobalBounds().contains(clickPos);
@@ -415,8 +453,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
                 if (!userHoursInput.empty() || !userMinutesInput.empty()) {
                     hasInput = true;
-                }
-                else {
+                } else {
                     hasInput = false;
                 }
 
@@ -424,7 +461,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     minutesClicked = false;
 
                 if (hoursClicked) {
-                    hoursClicked   = true;
+                    hoursClicked = true;
                     minutesClicked = false;
                     quickSortClicked = false;
                     mergeSortClicked = false;
@@ -435,10 +472,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     userMinutes.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
-                }
-                else if (minutesClicked) {
+                } else if (minutesClicked) {
                     minutesClicked = true;
-                    hoursClicked   = false;
+                    hoursClicked = false;
                     quickSortClicked = false;
                     mergeSortClicked = false;
                     resetClicked = false;
@@ -461,8 +497,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::Red);
                     mergeSortBox.setOutlineColor(sf::Color::White);
-                }
-                else if (mergeSortClicked && hasInput) {
+                } else if (mergeSortClicked && hasInput) {
                     mergeSortClicked = true;
                     hoursClicked = false;
                     minutesClicked = false;
@@ -473,8 +508,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::Red);
-                }
-                else if (resetClicked && hasInput) {
+                } else if (resetClicked && hasInput) {
                     mergeSortClicked = false;
                     hoursClicked = false;
                     minutesClicked = false;
@@ -508,17 +542,23 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
 
+
+
                     // create new blob for user
                     float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
                     float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
                     float totalTime = h + (m / 60.f);
 
-                    sf::Vector2f spawnPos = {blobBounds.getPosition().x + blobBoundsSize.x / 2.f,
-                                             blobBounds.getPosition().y + blobBoundsSize.y / 2.f};
+
+                    sf::Vector2f spawnPos = {
+                        blobBounds.getPosition().x + blobBoundsSize.x / 2.f,
+                        blobBounds.getPosition().y + blobBoundsSize.y / 2.f
+                    };
                     sf::Color userColor = determineColor(totalTime, 150);
 
                     blobs.push_back(Blob(totalTime + 3.5f, spawnPos, getRandomVelocity()));
                     userBlobExists = true;
+
 
                     blobs.back().shape.setFillColor(userColor);
                     blobs.back().shape.setOutlineColor(sf::Color::White);
@@ -541,17 +581,15 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                 }
             }
             // handles when the user inputs digits into the boxes
-            if (const auto* text = event->getIf<sf::Event::TextEntered>()) {
+            if (const auto *text = event->getIf<sf::Event::TextEntered>()) {
                 // 8 is backspace
                 if (text->unicode == 8) {
                     if (hoursClicked && !userHoursInput.empty()) {
                         userHoursInput.pop_back();
-                    }
-                    else if (minutesClicked && !userMinutesInput.empty()) {
+                    } else if (minutesClicked && !userMinutesInput.empty()) {
                         userMinutesInput.pop_back();
                     }
-                }
-                else if (text->unicode >= '0' && text->unicode <= '9') {
+                } else if (text->unicode >= '0' && text->unicode <= '9') {
                     if (hoursClicked) {
                         std::string hrs = userHoursInput + static_cast<char>(text->unicode);
                         // prevents being able to put a num above 24 in hrs and prevents 0 from being a digit
@@ -561,12 +599,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                             if (userHoursInput == "24") {
                                 // if user enters 24 in the hours section, their minutes automatically becomes 0
                                 userMinutesInput = "";
-                                userMinutesText.setString(""); // immediately after typing 24 hours, wipe the minutes section and make it unclickable
+                                userMinutesText.setString("");
+                                // immediately after typing 24 hours, wipe the minutes section and make it unclickable
                                 minutesClicked = false;
                             }
                         }
-                    }
-                    else if (minutesClicked) {
+                    } else if (minutesClicked) {
                         // only allow typing in minutes if the number of hours is not 24
                         if (userHoursInput != "24") {
                             std::string mins = userMinutesInput + static_cast<char>(text->unicode);
@@ -579,7 +617,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                 }
                 if (userHoursInput.empty()) {
                     userHoursText.setString("");
-                    userHoursText.setFillColor(sf::Color(128,128,128));
+                    userHoursText.setFillColor(sf::Color(128, 128, 128));
                 } else {
                     userHoursText.setString(userHoursInput);
                     userHoursText.setFillColor(sf::Color::White);
@@ -587,7 +625,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
                 if (userMinutesInput.empty()) {
                     userMinutesText.setString("");
-                    userMinutesText.setFillColor(sf::Color(128,128,128));
+                    userMinutesText.setFillColor(sf::Color(128, 128, 128));
                 } else {
                     userMinutesText.setString(userMinutesInput);
                     userMinutesText.setFillColor(sf::Color::White);
@@ -607,7 +645,7 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
         // make the labels disappear when mouse is clicked/hovered over it and changes color of user input boxes when mouse is hovered
         sf::Vector2i pos = sf::Mouse::getPosition(window);
-        bool hoursHovered   = userHours.getGlobalBounds().contains(sf::Vector2f(pos));
+        bool hoursHovered = userHours.getGlobalBounds().contains(sf::Vector2f(pos));
         bool minutesHovered = userMinutes.getGlobalBounds().contains(sf::Vector2f(pos));
         bool quickSortHovered = quickSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
         bool mergeSortHovered = mergeSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
@@ -624,15 +662,14 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
         if (hoursClicked) {
             userHours.setOutlineColor(sf::Color::Red);
-        }
-        else if (hoursHovered) {
-            userHours.setOutlineColor(sf::Color(139,0,0));
-        }
-        else {
+        } else if (hoursHovered) {
+            userHours.setOutlineColor(sf::Color(139, 0, 0));
+        } else {
             userHours.setOutlineColor(sf::Color::White);
         }
 
-        if (userHoursInput == "24") { // make the minutes box looked locked when hours entered is 24
+        if (userHoursInput == "24") {
+            // make the minutes box looked locked when hours entered is 24
             userMinutes.setFillColor(sf::Color(60, 60, 60));
             userMinutes.setOutlineColor(sf::Color(100, 100, 100));
             minutesLabel.setFillColor(sf::Color(80, 80, 80));
@@ -643,31 +680,25 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
             if (minutesClicked) {
                 userMinutes.setOutlineColor(sf::Color::Red);
-            }
-            else if (minutesHovered) {
-                userMinutes.setOutlineColor(sf::Color(139,0,0));
-            }
-            else {
+            } else if (minutesHovered) {
+                userMinutes.setOutlineColor(sf::Color(139, 0, 0));
+            } else {
                 userMinutes.setOutlineColor(sf::Color::White);
             }
         }
         if (quickSortClicked) {
             quickSortBox.setOutlineColor(sf::Color::Red);
-        }
-        else if (quickSortHovered) {
-            quickSortBox.setOutlineColor(sf::Color(139,0,0));
-        }
-        else {
+        } else if (quickSortHovered) {
+            quickSortBox.setOutlineColor(sf::Color(139, 0, 0));
+        } else {
             quickSortBox.setOutlineColor(sf::Color::White);
         }
 
         if (mergeSortClicked) {
             mergeSortBox.setOutlineColor(sf::Color::Red);
-        }
-        else if (mergeSortHovered) {
-            mergeSortBox.setOutlineColor(sf::Color(139,0,0));
-        }
-        else {
+        } else if (mergeSortHovered) {
+            mergeSortBox.setOutlineColor(sf::Color(139, 0, 0));
+        } else {
             mergeSortBox.setOutlineColor(sf::Color::White);
         }
 
@@ -677,15 +708,13 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                 submitClicked = false;
                 submitBox.setOutlineColor(sf::Color::White);
             }
-        }
-        else if (resetHovered) {
-            resetBox.setOutlineColor(sf::Color(139,0,0));
-        }
-        else {
+        } else if (resetHovered) {
+            resetBox.setOutlineColor(sf::Color(139, 0, 0));
+        } else {
             resetBox.setOutlineColor(sf::Color::White);
         }
 
-        for (Blob& blob : blobs) {
+        for (Blob &blob: blobs) {
             blob.shape.move(blob.velocity);
             sf::Vector2f pos = blob.shape.getPosition();
             sf::Vector2f boxPos = blobBounds.getPosition();
@@ -702,12 +731,14 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         window.draw(blobBounds);
         window.draw(userInputBox);
 
-        for (Blob& blob : blobs)
+        for (Blob &blob: blobs)
             window.draw(blob.shape);
 
-        if (hoursHovered || hoursClicked) { // when you hover over the boxes, one of the boxes had its red-outlined edge get overlapped by the
+        if (hoursHovered || hoursClicked) {
+            // when you hover over the boxes, one of the boxes had its red-outlined edge get overlapped by the
             window.draw(userMinutes); // other box's white outline
-            window.draw(userHours); // doing this make it so that the box that is "active" or being interacted with is draw later so its red outlines are not overlapped by white lines
+            window.draw(userHours);
+            // doing this make it so that the box that is "active" or being interacted with is draw later so its red outlines are not overlapped by white lines
         } else {
             window.draw(userHours);
             window.draw(userMinutes);
@@ -728,10 +759,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         window.draw(resetBox);
         window.draw(resetText);
 
-        for (auto& dot: keyDots) {
+        for (auto &dot: keyDots) {
             window.draw(dot);
         }
-        for (auto& label : keyDotLabels) {
+        for (auto &label: keyDotLabels) {
             window.draw(label);
         }
 

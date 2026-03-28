@@ -34,6 +34,24 @@ void fadeOutEffect(sf::RenderWindow& window) {
     }
 }
 
+// some helper functions to make the key!
+sf::CircleShape makeKeyDot(sf::Color color, float x, float y) {
+    sf::CircleShape dot(6.f);
+    dot.setFillColor(color);
+    dot.setPosition({x,y});
+    return dot;
+}
+
+sf::Text keyLabel(const sf::Font& font, std::string txt, float x, float y) {
+    sf::Text text(font);
+    text.setString(txt);
+    text.setCharacterSize(14);
+    text.setFillColor(sf::Color::White);
+    text.setPosition({x + 6.f, y - 3.f});
+    return text;
+
+}
+
 bool HomeScreenUI::show(sf::RenderWindow& window) {
     sf::Font boldFont;
     // you guys can more fonts to the resources folder and change this font if you'd like
@@ -228,6 +246,39 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     resetText.setFillColor(sf::Color::White);
     resetText.setPosition({inputX + 22.f, inputY + boxSize.y + window.getSize().y/3.18f});
     bool resetClicked = false;
+
+    // legend for what each color represents
+    float keyX = resetBox.getPosition().x - 15.f;
+    float keyY = resetBox.getPosition().y;
+    float keyYOffset = 25.f;
+    float keyXOffset = 20.f;
+    float keyDotsRadius = 6.f;
+
+    std::vector<sf::CircleShape> keyDots;
+    std::vector<sf::Text> keyDotLabels;
+
+    float keyStartingY = resetBox.getPosition().y + 60.f;
+    std::vector<std::pair<sf::Color, std::string>> keyItems = {
+        {sf::Color(50, 255, 25), "0-1 hr"},
+        {sf::Color(0, 255, 255), "1-2 hrs"},
+        {sf::Color(25, 100, 255), "2-4 hrs"},
+        {sf::Color(255, 25, 150), "4-6 hrs"},
+        {sf::Color(255, 255, 0), "6-8 hrs"},
+        {sf::Color(255, 125, 0), "8-10 hrs"},
+        {sf::Color(255, 25, 25), "10+ hrs"}
+    };
+
+    for (int i = 0; i < 4; i++) {
+        float dotY = keyStartingY + i * keyYOffset;
+        keyDots.push_back(makeKeyDot(keyItems[i].first, keyX, dotY));
+        keyDotLabels.push_back(keyLabel(font, keyItems[i].second, keyX + keyXOffset, dotY));
+    }
+    for (int i = 4; i < (int)keyItems.size(); i++) {
+        float secondColumnX = keyX + sortBoxSizes.x / 1.5f;
+        float dotY = keyStartingY + (i-4) * keyYOffset;
+        keyDots.push_back(makeKeyDot(keyItems[i].first, secondColumnX, dotY));
+        keyDotLabels.push_back(keyLabel(font, keyItems[i].second, secondColumnX + keyXOffset, dotY));
+    }
 
     auto hrBounds = hoursLabel.getLocalBounds();
     hoursLabel.setOrigin({0, hrBounds.size.y / 2.f});
@@ -574,6 +625,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         window.draw(mergeSortText);
         window.draw(resetBox);
         window.draw(resetText);
+        for (auto& dot: keyDots) {
+            window.draw(dot);
+        }
+        for (auto& label : keyDotLabels) {
+            window.draw(label);
+        }
 
         window.display();
     }

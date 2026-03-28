@@ -291,16 +291,16 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         keyDotLabels.push_back(keyLabel(font, keyItems[i].second, secondColumnX + keyXOffset, dotY));
     }
 
+    float hoursCenterY = userHours.getPosition().y + (userHours.getSize().y / 2.f);
+    float minutesCenterY = userMinutes.getPosition().y + (userMinutes.getSize().y / 2.f);
+
     auto hrBounds = hoursLabel.getLocalBounds();
-    hoursLabel.setOrigin({0, hrBounds.size.y / 2.f});
+    hoursLabel.setOrigin({0.f, hrBounds.size.y / 2.f + hrBounds.position.y});
     auto minBounds = minutesLabel.getLocalBounds();
-    minutesLabel.setOrigin({0, minBounds.size.y / 2.f});
+    minutesLabel.setOrigin({0, minBounds.size.y / 2.f + minBounds.position.y});
 
-    hoursLabel.setPosition({userHours.getPosition().x + userHours.getSize().x * 0.5f,
-                               userHours.getPosition().y + userHours.getSize().y / 2.f});
-
-    minutesLabel.setPosition({userMinutes.getPosition().x + userMinutes.getSize().x * 0.5f,
-                              userMinutes.getPosition().y + userMinutes.getSize().y / 2.f});
+    hoursLabel.setPosition({userHours.getPosition().x + 40.f, hoursCenterY});
+    minutesLabel.setPosition({userMinutes.getPosition().x + 40.f, minutesCenterY});
 
     // the text of the user's input
     sf::Text userHoursText(font);
@@ -309,8 +309,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     userMinutesText.setString("");
     userHoursText.setCharacterSize(17);
     userMinutesText.setCharacterSize(17);
-    userHoursText.setPosition({inputX + window.getSize().x/ 170, inputY + window.getSize().x/200});
-    userMinutesText.setPosition({inputX + window.getSize().x / 170, inputY + window.getSize().y / 17 });
+
+    userHoursText.setPosition({userHours.getPosition().x + 10.f, hoursCenterY});
+    userMinutesText.setPosition({userMinutes.getPosition().x + 10.f, minutesCenterY});
 
     // lets us know if quick sort or merge sort box is clicked, so we can have it highlighted
     bool quickSortClicked = false;
@@ -521,6 +522,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     userMinutesText.setString(userMinutesInput);
                     userMinutesText.setFillColor(sf::Color::White);
                 }
+
+                auto hBounds = userHoursText.getLocalBounds();
+                userHoursText.setOrigin({0.f, hBounds.size.y / 2.f + hBounds.position.y});
+                auto mBounds = userMinutesText.getLocalBounds();
+                userMinutesText.setOrigin({0.f, mBounds.size.y / 2.f + mBounds.position.y});
+
                 if (userHoursInput.empty() && userMinutesInput.empty()) {
                     quickSortClicked = false;
                     mergeSortClicked = false;

@@ -33,7 +33,19 @@ sf::Color determineColor(float radius, int opacity) {
     } else if (radius > 10.0) { //Neon-Red: Dangerous
         r = 255, g = 25, b = 25;
     }
+
     return sf::Color(r, g, b, opacity);
+}
+
+sf::Vector2f getRandomVelocity() {
+    // randomly give them velocity between -2 and 2
+    float vx = (rand() % 401 - 200) / 100.f;
+    float vy = (rand() % 401 - 200) / 100.f;
+    // making sure that no blobs stay stationary or are too slow
+    if (abs(vx) < 0.1f) vx = vx < 0 ? -0.25f : 0.25f;
+    if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
+
+    return sf::Vector2f({vx, vy});
 }
 
 // transition between homescreen and project (only really works for black background to black background for now)
@@ -355,17 +367,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         // randomly generate x- and y-coordinate values
         float x = minX + (float)(rand()) / float(RAND_MAX / (maxX - minX));
         float y = minY + (float)(rand()) / float(RAND_MAX / (maxY - minY));
-        // randomly give them velocity between -1 and 1
-        float vx = (rand() % 401 - 200) / 100.f;
-        float vy = (rand() % 401 - 200) / 100.f;
-        // making sure that no blobs stay stationary or are too slow
-        if (abs(vx) < 0.1f) vx = vx < 0 ? -0.25f : 0.25f;
-        if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
         //Add blob to vector
-        blobs.push_back(Blob(radius + 3.5, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
+        blobs.push_back(Blob(radius + 3.5, sf::Vector2f(x, y), getRandomVelocity()));
         blobs.back().shape.setFillColor(determineColor(radius, 150));
     }
+    bool userBlobExists = false;
 
     // submit button
     bool submitClicked = false;
@@ -480,6 +487,9 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     userHoursText.setString("");
                     userMinutesText.setString("");
                 } else if (submitClicked && hasInput) {
+                    if (userBlobExists && !blobs.empty())
+                        blobs.pop_back(); // if the user tries to enter a new blob, remove their previous blob
+
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
@@ -500,13 +510,18 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
                     sf::Vector2f spawnPos = {blobBounds.getPosition().x + blobBoundsSize.x / 2.f,
                                              blobBounds.getPosition().y + blobBoundsSize.y / 2.f};
-
                     sf::Color userColor = determineColor(totalTime, 150);
-                    blobs.push_back(Blob(totalTime + 3.5f, spawnPos, sf::Vector2f(1.5f, 1.5f)));
+
+                    blobs.push_back(Blob(totalTime + 3.5f, spawnPos, getRandomVelocity()));
+                    userBlobExists = true;
+
                     blobs.back().shape.setFillColor(userColor);
                     blobs.back().shape.setOutlineColor(sf::Color::White);
                     blobs.back().shape.setOutlineThickness(2);
 
+                    submitClicked = true;
+                    hoursClicked = false;
+                    minutesClicked = false;
                 } else {
                     hoursClicked = false;
                     minutesClicked = false;

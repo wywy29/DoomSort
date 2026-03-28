@@ -151,6 +151,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
     auto windowSize = window.getSize();
 
+
+
     // info for the left box surrounding where user can input info
     sf::Vector2f userInputBoxSize(windowSize.x * 0.2f, windowSize.y * 0.8f);
     sf::RectangleShape userInputBox(userInputBoxSize);
@@ -161,6 +163,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
     // lets the user know what to input (top of left box)
     // split into prompt1 and prompt2 to fit inside the left box
+
+
     sf::Text prompt1(font);
     sf::Text prompt2(font);
     prompt1.setString("What is your average daily");
@@ -182,6 +186,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     blobBounds.setFillColor(sf::Color::Black);
     blobBounds.setOutlineThickness(3);
 
+    // Added this offset later, in order to make room for the enter button
+    float enterButtonXOffset = -45.f;
+    float enterButtonYOffset = 8.f; // not really needed, but helps make the minutes and hours box look more centered between the prompt and sort boxes
+
     sf::Vector2f boxSize(userInputBoxSize.x * 0.4f, 35.f); // size of the hours and minutes boxes
     // the hours and minutes boxes for the user to input their screen time (inside left box)
     sf::RectangleShape userHours(boxSize);
@@ -192,8 +200,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     float inputX = leftBoxPos.x + (userInputBoxSize.x - userHours.getSize().x) / 2.f;
     float inputY = prompt2.getPosition().y + prompt2.getLocalBounds().size.y + 20.f;
 
-    userHours.setPosition({inputX, inputY});
-    userMinutes.setPosition({inputX, inputY + boxSize.y  + 2.5f}); // the floating point value added at the end is the vertical gap between the two boxes
+    userHours.setPosition({inputX + enterButtonXOffset, inputY + enterButtonYOffset});
+    userMinutes.setPosition({inputX + enterButtonXOffset, inputY + boxSize.y  + 2.5f + enterButtonYOffset}); // the floating point value added at the end is the vertical gap between the two boxes
     userHours.setFillColor(sf::Color::Black);
     userMinutes.setFillColor(sf::Color::Black);
     userHours.setOutlineColor(sf::Color::White);
@@ -298,8 +306,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     auto minBounds = minutesLabel.getLocalBounds();
     minutesLabel.setOrigin({0, minBounds.size.y / 2.f + minBounds.position.y});
 
-    hoursLabel.setPosition({userHours.getPosition().x + 40.f, hoursCenterY});
-    minutesLabel.setPosition({userMinutes.getPosition().x + 40.f, minutesCenterY});
+    hoursLabel.setPosition({userHours.getPosition().x - enterButtonXOffset, hoursCenterY + enterButtonYOffset/2});
+    minutesLabel.setPosition({userMinutes.getPosition().x - enterButtonXOffset, minutesCenterY + enterButtonYOffset/2});
 
     // the text of the user's input
     sf::Text userHoursText(font);
@@ -309,8 +317,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     userHoursText.setCharacterSize(17);
     userMinutesText.setCharacterSize(17);
 
-    userHoursText.setPosition({userHours.getPosition().x + 10.f, hoursCenterY});
-    userMinutesText.setPosition({userMinutes.getPosition().x + 10.f, minutesCenterY});
+    userHoursText.setPosition({userHours.getPosition().x - 33.f - enterButtonXOffset, hoursCenterY + enterButtonYOffset/2});
+    userMinutesText.setPosition({userMinutes.getPosition().x - 33.f - enterButtonXOffset, minutesCenterY + enterButtonYOffset/2});
 
     // lets us know if quick sort or merge sort box is clicked, so we can have it highlighted
     bool quickSortClicked = false;

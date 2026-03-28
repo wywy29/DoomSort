@@ -232,11 +232,47 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         if (abs(vx) < 0.1f) vx = vx < 0 ? -0.25f : 0.25f;
         if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
-        int r = rand() % 256;
-        int g = rand() % 256;
-        int b = rand() % 256;
-
         blobs.push_back(Blob(radius, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
+
+        //Color blobs (neon-colors) based on their screen time/radius values
+        int r, g, b = 0;
+
+        if (radius >= 0.0 && radius <= 1.0) { //Neon-Green: Excellent
+            r = 50;
+            g = 255;
+            b = 25;
+        }
+        else if (radius > 1.0 && radius <= 2.0) { //Neon-Cyan: Great
+            r = 0;
+            g = 255;
+            b = 255;
+        }
+        else if (radius > 2.0 && radius <= 4.0) { //Neon-Blue: Good
+            r = 25;
+            g = 100;
+            b = 255;
+        }
+        else if (radius > 4.0 && radius <= 6.0) { //Neon-Pink: OK
+            r = 255;
+            g = 25;
+            b = 150;
+        }
+        else if (radius > 6.0 && radius <= 8.0) { //Neon-Yellow: Fair
+            r = 255;
+            g = 255;
+            b = 0;
+        }
+        else if (radius > 8.0 && radius <= 12.0) { //Neon-Orange: Bad/Poor
+            r = 255;
+            g = 125;
+            b = 0;
+        }
+        else if (radius > 12.0) { //Neon-Red: Dangerous
+            r = 255;
+            g = 25;
+            b = 25;
+        }
+
         blobs.back().shape.setFillColor(sf::Color(r, g, b, 150));
     }
 

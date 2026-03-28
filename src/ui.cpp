@@ -187,6 +187,33 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     hoursLabel.setFillColor(sf::Color(128, 128, 128));
     minutesLabel.setFillColor(sf::Color(128, 128, 128));
 
+    // DA MERGE SORT, QUICK SORT, AND RESET BUTTONS!
+
+    sf::Vector2f sortBoxSizes(userInputBoxSize.x * 0.6f, 35.f);
+
+    sf::RectangleShape quickSortBox(sortBoxSizes);
+    sf::RectangleShape mergeSortBox(sortBoxSizes);
+    quickSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/7.5f});
+    mergeSortBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y/4.f});
+    quickSortBox.setFillColor(sf::Color::Black);
+    quickSortBox.setOutlineColor(sf::Color::White);
+    mergeSortBox.setFillColor(sf::Color::Black);
+    mergeSortBox.setOutlineColor(sf::Color::White);
+    quickSortBox.setOutlineThickness(2);
+    mergeSortBox.setOutlineThickness(2);
+
+    sf::Text quickSortText(font);
+    quickSortText.setString("QUICK SORT");
+    quickSortText.setCharacterSize(17);
+    quickSortText.setFillColor(sf::Color::White);
+    quickSortText.setPosition({inputX, inputY + boxSize.y + window.getSize().y/7.f});
+
+    sf::Text mergeSortText(font);
+    mergeSortText.setString("MERGE SORT");
+    mergeSortText.setCharacterSize(17);
+    mergeSortText.setFillColor(sf::Color::White);
+    mergeSortText.setPosition({inputX, inputY + boxSize.y + window.getSize().y/3.8f});
+
     auto hrBounds = hoursLabel.getLocalBounds();
     hoursLabel.setOrigin({0, hrBounds.size.y / 2.f});
     auto minBounds = minutesLabel.getLocalBounds();
@@ -207,6 +234,11 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
     userMinutesText.setCharacterSize(17);
     userHoursText.setPosition({inputX + window.getSize().x/ 170, inputY + window.getSize().x/200});
     userMinutesText.setPosition({inputX + window.getSize().x / 170, inputY + window.getSize().y / 17 });
+
+    // lets us know if quick sort or merge sort box is clicked, so we can have it highlighted
+    bool quickSortClicked = false;
+    bool mergeSortClicked = false;
+    bool hasInput = false; // determines if the user input boxes have inputs, to determine if the sort boxes can be clicked or not
 
     // what the user is typing into
     std::string userHoursInput = "";
@@ -287,6 +319,15 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                 sf::Vector2f clickPos(click->position);
                 hoursClicked = userHours.getGlobalBounds().contains(clickPos);
                 minutesClicked = userMinutes.getGlobalBounds().contains(clickPos);
+                quickSortClicked = quickSortBox.getGlobalBounds().contains(clickPos);
+                mergeSortClicked = mergeSortBox.getGlobalBounds().contains(clickPos);
+
+                if (!userHoursInput.empty() || !userMinutesInput.empty()) {
+                    hasInput = true;
+                }
+                else {
+                    hasInput = false;
+                }
 
                 if (minutesClicked && userHoursInput == "24") // the minutes box won't turn red if 24 hours is input
                     minutesClicked = false;
@@ -294,21 +335,56 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                 if (hoursClicked) {
                     hoursClicked   = true;
                     minutesClicked = false;
+                    quickSortClicked = false;
+                    mergeSortClicked = false;
                     userHours.setOutlineColor(sf::Color::Red);
                     userMinutes.setOutlineColor(sf::Color::White);
+                    quickSortBox.setOutlineColor(sf::Color::White);
+                    mergeSortBox.setOutlineColor(sf::Color::White);
                 }
                 else if (minutesClicked) {
                     minutesClicked = true;
                     hoursClicked   = false;
+                    quickSortClicked = false;
+                    mergeSortClicked = false;
                     userMinutes.setOutlineColor(sf::Color::Red);
                     userHours.setOutlineColor(sf::Color::White);
+                    quickSortBox.setOutlineColor(sf::Color::White);
+                    mergeSortBox.setOutlineColor(sf::Color::White);
+                }
+                // users must have an input to be able to click sort boxes
+                else if (quickSortClicked && hasInput) {
+                    quickSortClicked = true;
+                    hoursClicked = false;
+                    minutesClicked = false;
+                    mergeSortClicked = false;
+                    userMinutes.setOutlineColor(sf::Color::White);
+                    userHours.setOutlineColor(sf::Color::White);
+                    quickSortBox.setOutlineColor(sf::Color::Red);
+                    mergeSortBox.setOutlineColor(sf::Color::White);
+                }
+                else if (mergeSortClicked && hasInput) {
+                    mergeSortClicked = true;
+                    hoursClicked = false;
+                    minutesClicked = false;
+                    quickSortClicked = false;
+                    userMinutes.setOutlineColor(sf::Color::White);
+                    userHours.setOutlineColor(sf::Color::White);
+                    quickSortBox.setOutlineColor(sf::Color::White);
+                    mergeSortBox.setOutlineColor(sf::Color::Red);
                 }
                 else {
-                    hoursClicked   = false;
+                    hoursClicked = false;
                     minutesClicked = false;
+                    mergeSortClicked = false;
+                    quickSortClicked = false;
                     userHours.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
+                    quickSortBox.setOutlineColor(sf::Color::White);
+                    mergeSortBox.setOutlineColor(sf::Color::White);
                 }
+
+
             }
             // handles when the user inputs digits into the boxes
             if (const auto* text = event->getIf<sf::Event::TextEntered>()) {
@@ -362,6 +438,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     userMinutesText.setString(userMinutesInput);
                     userMinutesText.setFillColor(sf::Color::White);
                 }
+                if (userHoursInput.empty() && userMinutesInput.empty()) {
+                    quickSortClicked = false;
+                    mergeSortClicked = false;
+                }
             }
         }
 
@@ -369,6 +449,8 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         sf::Vector2i pos = sf::Mouse::getPosition(window);
         bool hoursHovered   = userHours.getGlobalBounds().contains(sf::Vector2f(pos));
         bool minutesHovered = userMinutes.getGlobalBounds().contains(sf::Vector2f(pos));
+        bool quickSortHovered = quickSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
+        bool mergeSortHovered = mergeSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
 
         if (hoursClicked) {
             userHours.setOutlineColor(sf::Color::Red);
@@ -399,6 +481,26 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                 userMinutes.setOutlineColor(sf::Color::White);
             }
         }
+        if (quickSortClicked) {
+            quickSortBox.setOutlineColor(sf::Color::Red);
+        }
+        else if (quickSortHovered) {
+            quickSortBox.setOutlineColor(sf::Color(139,0,0));
+        }
+        else {
+            quickSortBox.setOutlineColor(sf::Color::White);
+        }
+
+        if (mergeSortClicked) {
+            mergeSortBox.setOutlineColor(sf::Color::Red);
+        }
+        else if (mergeSortHovered) {
+            mergeSortBox.setOutlineColor(sf::Color(139,0,0));
+        }
+        else {
+            mergeSortBox.setOutlineColor(sf::Color::White);
+        }
+
 
         for (Blob& blob : blobs) {
             blob.shape.move(blob.velocity);
@@ -434,6 +536,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         window.draw(userMinutesText);
         window.draw(hoursLabel);
         window.draw(minutesLabel);
+        window.draw(quickSortBox);
+        window.draw(mergeSortBox);
+        window.draw(quickSortText);
+        window.draw(mergeSortText);
 
         window.display();
     }

@@ -233,69 +233,41 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
         //Update radius of smaller blobs to appear large enough to be seen, and larger blobs almost unchanged
-        float displayedRadius = radius;
-        if (radius >= 0.0 && radius <= 1.0) {
-            displayedRadius *= 20.0;
-        }
-        else if (radius > 1.0 && radius <= 2.0) {
-            displayedRadius *= 7.5;
-        }
-        else if (radius > 2.0 && radius <= 4.0) {
-            displayedRadius *= 2;
-        }
-        else if (radius > 4.0 && radius <= 6.0) {
-            displayedRadius *= 1.5;
-        }
-        else if (radius > 6.0 && radius <= 8.0) {
-            displayedRadius *= 1.3;
-        }
-        else if (radius > 8.0 && radius <= 10.0) {
-            displayedRadius *= 1.2;
-        }
-        else if (radius > 10.0) {
-            displayedRadius *= 1.1;
-        }
+        // if (radius >= 0.0 && radius <= 1.0) {
+        //     radius *= 10.0;
+        // } else if (radius > 1.0 && radius <= 2.0) {
+        //     radius *= 7.5;
+        // } else if (radius > 2.0 && radius <= 4.0) {
+        //     radius *= 2;
+        // } else if (radius > 4.0 && radius <= 6.0) {
+        //     radius *= 1.5;
+        // } else if (radius > 6.0 && radius <= 8.0) {
+        //     radius *= 1.3;
+        // } else if (radius > 8.0 && radius <= 10.0) {
+        //     radius *= 1.2;
+        // } else if (radius > 10.0) {
+        //     radius *= 1.1;
+        // }
 
         //Add blob to vector
-        blobs.push_back(Blob(displayedRadius, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
+        blobs.push_back(Blob(radius + 3.5, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
 
         //Color blobs (neon-colors) based on their screen time/original radius values
-        int r, g, b = 0;
-
+        int r, g, b;
         if (radius >= 0.0 && radius <= 1.0) { //Neon-Green: Excellent
-            r = 50;
-            g = 255;
-            b = 25;
-        }
-        else if (radius > 1.0 && radius <= 2.0) { //Neon-Cyan: Great
-            r = 0;
-            g = 255;
-            b = 255;
-        }
-        else if (radius > 2.0 && radius <= 4.0) { //Neon-Blue: Good
-            r = 25;
-            g = 100;
-            b = 255;
-        }
-        else if (radius > 4.0 && radius <= 6.0) { //Neon-Pink: OK
-            r = 255;
-            g = 25;
-            b = 150;
-        }
-        else if (radius > 6.0 && radius <= 8.0) { //Neon-Yellow: Fair
-            r = 255;
-            g = 255;
-            b = 0;
-        }
-        else if (radius > 8.0 && radius <= 10.0) { //Neon-Orange: Bad/Poor
-            r = 255;
-            g = 125;
-            b = 0;
-        }
-        else if (radius > 10.0) { //Neon-Red: Dangerous
-            r = 255;
-            g = 25;
-            b = 25;
+            r = 50, g = 255, b = 25;
+        } else if (radius > 1.0 && radius <= 2.0) { //Neon-Cyan: Great
+            r = 0, g = 255, b = 255;
+        } else if (radius > 2.0 && radius <= 4.0) { //Neon-Blue: Good
+            r = 25, g = 100, b = 255;
+        } else if (radius > 4.0 && radius <= 6.0) { //Neon-Pink: OK
+            r = 255, g = 25, b = 150;
+        } else if (radius > 6.0 && radius <= 8.0) { //Neon-Yellow: Fair
+            r = 255, g = 255, b = 0;
+        } else if (radius > 8.0 && radius <= 10.0) { //Neon-Orange: Bad/Poor
+            r = 255, g = 125, b = 0;
+        } else if (radius > 10.0) { //Neon-Red: Dangerous
+            r = 255, g = 25, b = 25;
         }
 
         blobs.back().shape.setFillColor(sf::Color(r, g, b, 150));

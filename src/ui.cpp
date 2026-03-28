@@ -432,7 +432,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
         submitBox.getPosition().y + submitBox.getSize().y / 2.f
     });
 
-    std::vector<Popup> popups;
 
 
     while (window.isOpen()) {

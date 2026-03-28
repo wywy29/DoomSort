@@ -232,16 +232,28 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         if (abs(vx) < 0.1f) vx = vx < 0 ? -0.25f : 0.25f;
         if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
-        //Update radius of smaller blobs to appear large enough to be seen, and larger blobs unchanged
+        //Update radius of smaller blobs to appear large enough to be seen, and larger blobs almost unchanged
         float displayedRadius = radius;
         if (radius >= 0.0 && radius <= 1.0) {
             displayedRadius *= 20.0;
         }
         else if (radius > 1.0 && radius <= 2.0) {
-            displayedRadius *= 5.0;
+            displayedRadius *= 7.5;
         }
         else if (radius > 2.0 && radius <= 4.0) {
-            displayedRadius *= 2.0;
+            displayedRadius *= 2;
+        }
+        else if (radius > 4.0 && radius <= 6.0) {
+            displayedRadius *= 1.5;
+        }
+        else if (radius > 6.0 && radius <= 8.0) {
+            displayedRadius *= 1.3;
+        }
+        else if (radius > 8.0 && radius <= 10.0) {
+            displayedRadius *= 1.2;
+        }
+        else if (radius > 10.0) {
+            displayedRadius *= 1.1;
         }
 
         //Add blob to vector

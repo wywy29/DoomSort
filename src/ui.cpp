@@ -462,6 +462,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userMinutes.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
                 } else if (minutesClicked) {
                     minutesClicked = true;
                     hoursClicked = false;
@@ -474,6 +475,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
                 }
                 // users must have an input to be able to click sort boxes
                 else if (quickSortClicked && hasInput) {
@@ -482,22 +484,26 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     minutesClicked = false;
                     mergeSortClicked = false;
                     resetClicked = false;
+                    submitClicked = false;
                     resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::Red);
                     mergeSortBox.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
                 } else if (mergeSortClicked && hasInput) {
                     mergeSortClicked = true;
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
                     resetClicked = false;
+                    submitClicked = false;
                     resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::Red);
+                    submitBox.setOutlineColor(sf::Color::White);
                 } else if (resetClicked) {
                     if (userBlobExists && !blobs.empty()) { // only remove the user's blob if it exists
                         blobs.pop_back();
@@ -528,14 +534,17 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userMinutesText.setString("");
                     hasInput = false;
                 } else if (submitClicked && hasInput) {
-                    if (userBlobExists && !blobs.empty())
+                    if (userBlobExists && !blobs.empty()) {
                         blobs.pop_back(); // if the user tries to enter a new blob, remove their previous blob
+                        userBlobExists = false;
+                    }
 
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
                     mergeSortClicked = false;
                     resetClicked = false;
+                    submitClicked = true;
 
                     submitBox.setOutlineColor(sf::Color::Red);
                     resetBox.setOutlineColor(sf::Color::Red);
@@ -561,10 +570,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     blobs.back().shape.setFillColor(userColor);
                     blobs.back().shape.setOutlineColor(sf::Color::White);
                     blobs.back().shape.setOutlineThickness(2);
-
-                    submitClicked = true;
-                    hoursClicked = false;
-                    minutesClicked = false;
                 } else {
                     hoursClicked = false;
                     minutesClicked = false;

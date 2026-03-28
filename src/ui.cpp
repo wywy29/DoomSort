@@ -548,7 +548,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     sf::FloatRect bounds = popup1.text.getGlobalBounds();
                     popup1.text.setPosition({blobBounds.getPosition().x-240.f, blobBounds.getPosition().y-40.f});
                     popup2.text.setPosition({blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y-40.f});
-                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f});
+                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f}); //
 
                     popup1.shown = true;
                     popup2.shown = true;

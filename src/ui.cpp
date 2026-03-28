@@ -22,6 +22,17 @@ struct Popup {
 };
 
 
+sf::Vector2f getRandomPos(const sf::RectangleShape& blobBounds, const sf::Vector2f blobBoundsSize, float radius) {
+    float minX = blobBounds.getPosition().x + 5.f;
+    float maxX = blobBounds.getPosition().x + blobBoundsSize.x - (radius * 2.f) - 5.f;
+    float minY = blobBounds.getPosition().y + 5.f;
+    float maxY = blobBounds.getPosition().y + blobBoundsSize.y - (radius * 2.f) - 5.f;
+    // randomly generate x- and y-coordinate values
+    float x = minX + (float)(rand()) / float(RAND_MAX / (maxX - minX));
+    float y = minY + (float)(rand()) / float(RAND_MAX / (maxY - minY));
+
+    return sf::Vector2f({x, y});
+}
 
 sf::Color determineColor(float radius, int opacity) {
     // color blobs (neon-colors) based on their screen time/original radius values
@@ -217,10 +228,10 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
     sf::Text prompt1(font);
     sf::Text prompt2(font);
-    prompt1.setString("What is your average daily");
-    prompt2.setString("screen time on your phone?");
-    prompt1.setCharacterSize(20);
-    prompt2.setCharacterSize(20);
+    prompt1.setString("What's your average daily");
+    prompt2.setString("phone screen time?");
+    prompt1.setCharacterSize(18);
+    prompt2.setCharacterSize(18);
     prompt1.setFillColor(sf::Color::White);
     prompt2.setFillColor(sf::Color::White);
     auto leftBoxPos = userInputBox.getPosition();
@@ -394,17 +405,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
     for (int i = 0; i < screenTimes.size(); i++) {
         float radius = screenTimes[i];
-        // calculate max and min x- and y-coordinate values
-        float minX = blobBounds.getPosition().x + 5.f;
-        float maxX = blobBounds.getPosition().x + blobBoundsSize.x - (radius * 2.f) - 5.f;
-        float minY = blobBounds.getPosition().y + 5.f;
-        float maxY = blobBounds.getPosition().y + blobBoundsSize.y - (radius * 2.f) - 5.f;
-        // randomly generate x- and y-coordinate values
-        float x = minX + (float) (rand()) / float(RAND_MAX / (maxX - minX));
-        float y = minY + (float) (rand()) / float(RAND_MAX / (maxY - minY));
-
-        //Add blob to vector
-        blobs.push_back(Blob(radius + 3.5, sf::Vector2f(x, y), getRandomVelocity()));
+        blobs.push_back(Blob(radius + 3.5, getRandomPos(blobBounds, blobBoundsSize, radius), getRandomVelocity()));
         blobs.back().shape.setFillColor(determineColor(radius, 150));
     }
     bool userBlobExists = false;
@@ -471,6 +472,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userMinutes.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
                 } else if (minutesClicked) {
                     minutesClicked = true;
                     hoursClicked = false;
@@ -483,6 +485,8 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
+
                 }
                 // users must have an input to be able to click sort boxes
                 else if (quickSortClicked && submitted) {
@@ -491,11 +495,13 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     minutesClicked = false;
                     mergeSortClicked = false;
                     resetClicked = false;
+                    submitClicked = false;
                     resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::Red);
                     mergeSortBox.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
 
                     //popups
                     bool shown = true;
@@ -553,19 +559,30 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     popup1.shown = true;
                     popup2.shown = true;
                     popup3.shown = true;
-                } else if (resetClicked && hasInput) {
+                } else if (resetClicked) {
+                    if (userBlobExists && !blobs.empty()) {
+                        blobs.pop_back();
+                        userBlobExists = false;
+                    }
                     mergeSortClicked = false;
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
                     resetClicked = true;
                     submitted = false;
+                    submitClicked = false;
                     resetBox.setOutlineColor(sf::Color::Red);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
-                    blobs.pop_back(); // remove user blob
+                    submitBox.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
+
+                    for (Blob& blob : blobs) { // randomize the initial velocities and starting positions of the blobs when reset is pressed
+                        blob.shape.setPosition(getRandomPos(blobBounds, blobBoundsSize, blob.radius));
+                        blob.velocity = getRandomVelocity();
+                    }
                     popup1.shown = false;
                     popup2.shown = false;
                     popup3.shown = false;
@@ -574,16 +591,19 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userMinutesInput = "";
                     userHoursText.setString("");
                     userMinutesText.setString("");
+                    hasInput = false;
                 } else if (submitClicked && hasInput) {
                     submitted = true;
-                    if (userBlobExists && !blobs.empty())
+                    if (userBlobExists && !blobs.empty()) {
                         blobs.pop_back(); // if the user tries to enter a new blob, remove their previous blob
-
+                        userBlobExists = false;
+                    }
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
                     mergeSortClicked = false;
                     resetClicked = false;
+                    submitClicked = true;
 
                     submitBox.setOutlineColor(sf::Color::Red);
                     resetBox.setOutlineColor(sf::Color::Red);
@@ -614,9 +634,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     blobs.back().shape.setOutlineColor(sf::Color::White);
                     blobs.back().shape.setOutlineThickness(2);
 
-                    submitClicked = true;
-                    hoursClicked = false;
-                    minutesClicked = false;
                 } else {
                     hoursClicked = false;
                     minutesClicked = false;

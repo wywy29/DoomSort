@@ -35,10 +35,19 @@ void fadeOutEffect(sf::RenderWindow& window) {
 }
 
 // some helper functions to make the key!
-sf::CircleShape makeKeyDot(sf::Color color, float x, float y) {
-    sf::CircleShape dot(6.f);
+sf::CircleShape makeKeyDot(sf::Color color, float x, float y, float radius) {
+    sf::CircleShape dot(radius);
     dot.setFillColor(color);
+    // the first and second dot looking very out of place on the key compared to the other dots
+    if (radius == 1.5f) {
+        dot.setPosition({x+5,y+5});
+    }
+    else if (radius == 2.5f) {
+        dot.setPosition({x+4, y+4});
+    }
+    else {
     dot.setPosition({x,y});
+    }
     return dot;
 }
 
@@ -268,15 +277,17 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         {sf::Color(255, 25, 25), "10+ hrs"}
     };
 
+    std::vector<float> dotsRadii = {1.5f, 2.5f, 5.f, 6.f, 7.f, 8.f, 9.f};
+
     for (int i = 0; i < 4; i++) {
         float dotY = keyStartingY + i * keyYOffset;
-        keyDots.push_back(makeKeyDot(keyItems[i].first, keyX, dotY));
+        keyDots.push_back(makeKeyDot(keyItems[i].first, keyX, dotY, dotsRadii[i]));
         keyDotLabels.push_back(keyLabel(font, keyItems[i].second, keyX + keyXOffset, dotY));
     }
     for (int i = 4; i < (int)keyItems.size(); i++) {
         float secondColumnX = keyX + sortBoxSizes.x / 1.5f;
         float dotY = keyStartingY + (i-4) * keyYOffset;
-        keyDots.push_back(makeKeyDot(keyItems[i].first, secondColumnX, dotY));
+        keyDots.push_back(makeKeyDot(keyItems[i].first, secondColumnX, dotY, dotsRadii[i]));
         keyDotLabels.push_back(keyLabel(font, keyItems[i].second, secondColumnX + keyXOffset, dotY));
     }
 

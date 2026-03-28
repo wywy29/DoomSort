@@ -10,7 +10,7 @@ using namespace std;
 
 int partition(vector<Blob>& arr, int low, int high) {
     int mid = low + (high - low) / 2;
-    swap(arr[low].radius, arr[mid].radius);
+    swap(arr[low], arr[mid]);
 
     float pivot = arr[low].radius;
     int i = low, j = high;
@@ -22,7 +22,7 @@ int partition(vector<Blob>& arr, int low, int high) {
 
         if (i >= j) return j;
 
-        swap(arr[i].radius, arr[j].radius);
+        swap(arr[i], arr[j]);
 
         i++;
         j--;
@@ -43,41 +43,32 @@ void quickSort(vector<Blob>& arr) {
 }
 
 void merge(vector<Blob>& arr, int left, int mid, int right) {
-    int leftHalf = mid - left + 1;
-    int rightHalf = right - mid;
-    vector<float> leftTemp(leftHalf);
-    vector<float> rightTemp(rightHalf);
-
-    for (int i = 0; i < leftHalf; i++) {
-        leftTemp[i] = arr[left + i].radius;
-    }
-    for (int i = 0; i < rightHalf; i++) {
-        rightTemp[i] = arr[mid + i + 1].radius;
-    }
+    vector<Blob> leftTemp(arr.begin() + left, arr.begin() + mid + 1);
+    vector<Blob> rightTemp(arr.begin() + mid + 1, arr.begin() + right + 1);
 
     int i = 0;
     int j = 0;
     int k = left;
 
-    while (i < leftHalf && j < rightHalf) {
-        if (leftTemp[i] <= rightTemp[j]) {
-            arr[k].radius = leftTemp[i];
+    while (i < leftTemp.size() && j < rightTemp.size()) {
+        if (leftTemp[i].radius <= rightTemp[j].radius) {
+            arr[k] = leftTemp[i];
             i++;
         }
         else {
-            arr[k].radius = rightTemp[j];
+            arr[k] = rightTemp[j];
             j++;
         }
         k++;
     }
-    while (i < leftHalf) {
-        arr[k].radius = leftTemp[i];
+    while (i < leftTemp.size()) {
+        arr[k] = leftTemp[i];
         i++;
         k++;
     }
 
-    while (j < rightHalf) {
-        arr[k].radius = rightTemp[j];
+    while (j < rightTemp.size()) {
+        arr[k] = rightTemp[j];
         j++;
         k++;
     }

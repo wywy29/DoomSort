@@ -2,6 +2,9 @@
 #include "sort.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
+
 
 //Blob constructor
 Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
@@ -434,6 +437,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
     });
 
     bool submitted = false; // to check if user submits in order to determine if they can click one of the sort boxes
+    bool sorted = false; // prevent being able to submit after sorting
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -496,12 +500,36 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     mergeSortClicked = false;
                     resetClicked = false;
                     submitClicked = false;
+                    submitted = false;
+                    sorted = true;
                     resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::Red);
                     mergeSortBox.setOutlineColor(sf::Color::White);
                     submitBox.setOutlineColor(sf::Color::White);
+
+                    quickSort(blobs);
+                    float rowX = blobBounds.getPosition().x + 20.f;
+                    float rowY = blobBounds.getPosition().y + 20.f;
+                    float x = rowX;
+                    float y = rowY;
+                    float tallestBlob = 0.f;
+
+                    for (Blob &blob : blobs) {
+                        float diameter = blob.radius * 2.f;
+                        if (x + diameter > rowX + blobBoundsSize.x - 60.f) {
+                            x = rowX;
+                            y += tallestBlob + 6.f;
+                            tallestBlob = 0.f;
+                        }
+                        blob.shape.setPosition({x, y});
+                        blob.velocity = {0.f, 0.f}; // make them stop moving
+                        x += diameter + 6.f;
+                        if (diameter > tallestBlob) {
+                            tallestBlob = diameter;
+                        }
+                    }
 
                     //popups
                     bool shown = true;
@@ -512,19 +540,29 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
                     // myopia increases by 17 pct per additonal hr
                     int myopiaRisk = int(totalTime * 17);
-                    int percentage = 0; // added after sort is completed
-
+                    int belowUserInput = 0;
+                    for (int i = 0; i < screenTimes.size(); i++) {
+                        if (screenTimes[i] < totalTime) {
+                            belowUserInput++;
+                        }
+                    }
+                    float percentage = 0;
+                    if (!screenTimes.empty()) {
+                        percentage = (100.f* belowUserInput / screenTimes.size());
+                    }
+                    // round to 2 decimal places
+                    std::ostringstream stream;
+                    stream << std::fixed << std::setprecision(2) << percentage;
                     // update popup text
                     popup1.text.setString("+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
-                    popup2.text.setString("You have more screen time than " + std::to_string(percentage) + "% of the population");
+                    popup2.text.setString("You have more screen time than " + stream.str() + "% of the population");
                     popup3.text.setString("qweweqw"); //undecided for now
-
 
                     sf::FloatRect bounds = popup1.text.getGlobalBounds();
                     popup1.text.setPosition({blobBounds.getPosition().x-240.f, blobBounds.getPosition().y-40.f});
                     popup2.text.setPosition({blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y-40.f});
-                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f});
-
+                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f}); //
+\
                     popup1.shown = true;
                     popup2.shown = true;
                     popup3.shown = true;
@@ -534,27 +572,68 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     minutesClicked = false;
                     quickSortClicked = false;
                     resetClicked = false;
+                    sorted = true;
+                    submitted = false;
                     resetBox.setOutlineColor(sf::Color::White);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::Red);
 
+                    mergeSort(blobs);
+                    float rowX = blobBounds.getPosition().x + 20.f;
+                    float rowY = blobBounds.getPosition().y + 20.f;
+                    float x = rowX;
+                    float y = rowY;
+                    float tallestBlob = 0.f;
+
+                    for (Blob &blob : blobs) {
+                        float diameter = blob.radius * 2.f;
+                        if (x + diameter > rowX + blobBoundsSize.x - 60.f) {
+                            x = rowX;
+                            y += tallestBlob + 6.f;
+                            tallestBlob = 0.f;
+                        }
+                        blob.shape.setPosition({x, y});
+                        blob.velocity = {0.f, 0.f}; // make them stop moving
+                        x += diameter + 6.f;
+                        if (diameter > tallestBlob) {
+                            tallestBlob = diameter;
+                        }
+                    }
+
+
                     //popups
                     bool shown = true;
+
                     float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
                     float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
                     float totalTime = h + (m / 60.f);
 
                     // myopia increases by 17 pct per additonal hr
                     int myopiaRisk = int(totalTime * 17);
-                    int percentage = 0; // added after sort is completed
-
+                    int belowUserInput = 0;
+                    for (int i = 0; i < screenTimes.size(); i++) {
+                        if (screenTimes[i] < totalTime) {
+                            belowUserInput++;
+                        }
+                    }
+                    float percentage = 0;
+                    if (!screenTimes.empty()) {
+                        percentage = (100.f* belowUserInput / screenTimes.size());
+                    }
+                    // round to 2 decimal places
+                    std::ostringstream stream;
+                    stream << std::fixed << std::setprecision(2) << percentage;
                     // update popup text
+                    popup1.text.setString("+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
+                    popup2.text.setString("You have more screen time than " + stream.str() + "% of the population");
+                    popup3.text.setString("qweweqw"); //undecided for now
+
                     sf::FloatRect bounds = popup1.text.getGlobalBounds();
                     popup1.text.setPosition({blobBounds.getPosition().x-240.f, blobBounds.getPosition().y-40.f});
                     popup2.text.setPosition({blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y-40.f});
-                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f}); //
+                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f});
 
                     popup1.shown = true;
                     popup2.shown = true;
@@ -571,6 +650,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     resetClicked = true;
                     submitted = false;
                     submitClicked = false;
+                    sorted = false;
                     resetBox.setOutlineColor(sf::Color::Red);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
@@ -592,7 +672,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userHoursText.setString("");
                     userMinutesText.setString("");
                     hasInput = false;
-                } else if (submitClicked && hasInput) {
+                } else if (submitClicked && hasInput && !sorted) {
                     submitted = true;
                     if (userBlobExists && !blobs.empty()) {
                         blobs.pop_back(); // if the user tries to enter a new blob, remove their previous blob
@@ -839,7 +919,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
         if (popup2.shown) {
             window.draw(popup2.text);
         }
-        if (popup2.shown) {
+        if (popup3.shown) {
             window.draw(popup3.text);
         }
 

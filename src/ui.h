@@ -22,5 +22,8 @@ struct Blob {
     sf::Vector2f velocity;
     float radius;
 
+    Blob() : radius(0.f) {
+    }
+
     Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity);
 };

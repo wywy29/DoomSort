@@ -21,8 +21,6 @@ struct Popup {
     }
 };
 
-
-
 sf::Color determineColor(float radius, int opacity) {
     // color blobs (neon-colors) based on their screen time/original radius values
     int r, g, b;
@@ -61,6 +59,18 @@ sf::Vector2f getRandomVelocity() {
     if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
     return sf::Vector2f({vx, vy});
+}
+
+sf::Vector2f getRandomPos(const sf::RectangleShape& blobBounds, const sf::Vector2f blobBoundsSize, float radius) {
+    float minX = blobBounds.getPosition().x + 5.f;
+    float maxX = blobBounds.getPosition().x + blobBoundsSize.x - (radius * 2.f) - 5.f;
+    float minY = blobBounds.getPosition().y + 5.f;
+    float maxY = blobBounds.getPosition().y + blobBoundsSize.y - (radius * 2.f) - 5.f;
+    // randomly generate x- and y-coordinate values
+    float x = minX + (float)(rand()) / float(RAND_MAX / (maxX - minX));
+    float y = minY + (float)(rand()) / float(RAND_MAX / (maxY - minY));
+
+    return sf::Vector2f({x, y});
 }
 
 // transition between homescreen and project (only really works for black background to black background for now)
@@ -213,8 +223,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
     // lets the user know what to input (top of left box)
     // split into prompt1 and prompt2 to fit inside the left box
-
-
     sf::Text prompt1(font);
     sf::Text prompt2(font);
     prompt1.setString("What is your average daily");
@@ -304,7 +312,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
     mergeSortText.setPosition({inputX + 3.f, inputY + boxSize.y + window.getSize().y / 4.35f});
 
     // RESET BUTTON (should reset any inputs, outline color of the boxes, remove the user blob, and reset all blobs to float again)
-
     sf::RectangleShape resetBox(sortBoxSizes);
     resetBox.setPosition({inputX - 22.f, inputY + boxSize.y + window.getSize().y / 3.3f});
     resetBox.setFillColor(sf::Color::Black);
@@ -387,20 +394,10 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
     // blobs
     std::vector<Blob> blobs;
-
     for (int i = 0; i < screenTimes.size(); i++) {
         float radius = screenTimes[i];
-        // calculate max and min x- and y-coordinate values
-        float minX = blobBounds.getPosition().x + 5.f;
-        float maxX = blobBounds.getPosition().x + blobBoundsSize.x - (radius * 2.f) - 5.f;
-        float minY = blobBounds.getPosition().y + 5.f;
-        float maxY = blobBounds.getPosition().y + blobBoundsSize.y - (radius * 2.f) - 5.f;
-        // randomly generate x- and y-coordinate values
-        float x = minX + (float) (rand()) / float(RAND_MAX / (maxX - minX));
-        float y = minY + (float) (rand()) / float(RAND_MAX / (maxY - minY));
 
-        //Add blob to vector
-        blobs.push_back(Blob(radius + 3.5, sf::Vector2f(x, y), getRandomVelocity()));
+        blobs.push_back(Blob(radius + 3.5, getRandomPos(blobBounds, blobBoundsSize, radius), getRandomVelocity()));
         blobs.back().shape.setFillColor(determineColor(radius, 150));
     }
     bool userBlobExists = false;
@@ -427,8 +424,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
         submitBox.getPosition().x + submitBox.getSize().x / 2.f,
         submitBox.getPosition().y + submitBox.getSize().y / 2.f
     });
-
-
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -503,23 +498,35 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::Red);
-                } else if (resetClicked && hasInput) {
+                } else if (resetClicked) {
+                    if (userBlobExists && !blobs.empty()) { // only remove the user's blob if it exists
+                        blobs.pop_back();
+                        userBlobExists = false;
+                    }
+
                     mergeSortClicked = false;
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
+                    submitClicked = false;
                     resetClicked = true;
                     resetBox.setOutlineColor(sf::Color::Red);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
-                    blobs.pop_back(); // remove user blob
+                    submitBox.setOutlineColor(sf::Color::White);
+
+                    for (Blob& blob : blobs) { // randomize the initial velocities and starting positions of the blobs when reset is pressed
+                        blob.shape.setPosition(getRandomPos(blobBounds, blobBoundsSize, blob.radius));
+                        blob.velocity = getRandomVelocity();
+                    }
 
                     userHoursInput = "";
                     userMinutesInput = "";
                     userHoursText.setString("");
                     userMinutesText.setString("");
+                    hasInput = false;
                 } else if (submitClicked && hasInput) {
                     if (userBlobExists && !blobs.empty())
                         blobs.pop_back(); // if the user tries to enter a new blob, remove their previous blob
@@ -537,13 +544,10 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
 
-
-
                     // create new blob for user
                     float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
                     float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
                     float totalTime = h + (m / 60.f);
-
 
                     sf::Vector2f spawnPos = {
                         blobBounds.getPosition().x + blobBoundsSize.x / 2.f,
@@ -553,7 +557,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
                     blobs.push_back(Blob(totalTime + 3.5f, spawnPos, getRandomVelocity()));
                     userBlobExists = true;
-
 
                     blobs.back().shape.setFillColor(userColor);
                     blobs.back().shape.setOutlineColor(sf::Color::White);

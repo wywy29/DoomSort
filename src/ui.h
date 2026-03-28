@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+
 // simple home screen, will just contain a button to go to the actual project
 class HomeScreenUI {
     public:

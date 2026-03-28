@@ -13,9 +13,9 @@ Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
 
 struct Popup {
     sf::Text text;
-    bool shown; // popup should appear after sort, so if its sorted, the popups will be shown (true)
+    bool shown; // popups should appear after sort, so if its sorted, the popups will be shown (true)
 
-    Popup(const sf::Font &font, std::string msg, sf::Vector2f pos) : text(font, msg, 16) {
+    Popup(const sf::Font &font, std::string msg, sf::Vector2f pos) : text(font, msg, 16), shown(false) {
         text.setFillColor(sf::Color::White);
         text.setPosition(pos);
     }
@@ -249,6 +249,10 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
     sf::RectangleShape userHours(boxSize);
     sf::RectangleShape userMinutes(boxSize);
 
+    static Popup popup1(font, "+0% chance of myopia based on your screentime", {blobBounds.getPosition().x + 10.f, blobBounds.getPosition().y + 10.f});
+    static Popup popup2(font, "You have more screentime than 0% of the population", {blobBounds.getPosition().x + 10.f, blobBounds.getPosition().y + 10.f});
+    static Popup popup3(font, "smth sleep quality", {blobBounds.getPosition().x + 10.f, blobBounds.getPosition().y + 10.f});
+
 
     // lot of repetition so i'm making an x and y for the setPosition function
     float inputX = leftBoxPos.x + (userInputBoxSize.x - userHours.getSize().x) / 2.f;
@@ -428,7 +432,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
         submitBox.getPosition().y + submitBox.getSize().y / 2.f
     });
 
-
+    bool submitted = false; // to check if user submits in order to determine if they can click one of the sort boxes
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -481,7 +485,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     mergeSortBox.setOutlineColor(sf::Color::White);
                 }
                 // users must have an input to be able to click sort boxes
-                else if (quickSortClicked && hasInput) {
+                else if (quickSortClicked && submitted) {
                     quickSortClicked = true;
                     hoursClicked = false;
                     minutesClicked = false;
@@ -492,7 +496,33 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::Red);
                     mergeSortBox.setOutlineColor(sf::Color::White);
-                } else if (mergeSortClicked && hasInput) {
+
+                    //popups
+                    bool shown = true;
+
+                    float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
+                    float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
+                    float totalTime = h + (m / 60.f);
+
+                    // myopia increases by 17 pct per additonal hr
+                    int myopiaRisk = int(totalTime * 17);
+                    int percentage = 0; // added after sort is completed
+
+                    // update popup text
+                    popup1.text.setString("+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
+                    popup2.text.setString("You have more screen time than " + std::to_string(percentage) + "% of the population");
+                    popup3.text.setString("qweweqw"); //undecided for now
+
+
+                    sf::FloatRect bounds = popup1.text.getGlobalBounds();
+                    popup1.text.setPosition({blobBounds.getPosition().x-240.f, blobBounds.getPosition().y-40.f});
+                    popup2.text.setPosition({blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y-40.f});
+                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f});
+
+                    popup1.shown = true;
+                    popup2.shown = true;
+                    popup3.shown = true;
+                } else if (mergeSortClicked && submitted) {
                     mergeSortClicked = true;
                     hoursClicked = false;
                     minutesClicked = false;
@@ -503,24 +533,49 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::Red);
+
+                    //popups
+                    bool shown = true;
+                    float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
+                    float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
+                    float totalTime = h + (m / 60.f);
+
+                    // myopia increases by 17 pct per additonal hr
+                    int myopiaRisk = int(totalTime * 17);
+                    int percentage = 0; // added after sort is completed
+
+                    // update popup text
+                    sf::FloatRect bounds = popup1.text.getGlobalBounds();
+                    popup1.text.setPosition({blobBounds.getPosition().x-240.f, blobBounds.getPosition().y-40.f});
+                    popup2.text.setPosition({blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y-40.f});
+                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f});
+
+                    popup1.shown = true;
+                    popup2.shown = true;
+                    popup3.shown = true;
                 } else if (resetClicked && hasInput) {
                     mergeSortClicked = false;
                     hoursClicked = false;
                     minutesClicked = false;
                     quickSortClicked = false;
                     resetClicked = true;
+                    submitted = false;
                     resetBox.setOutlineColor(sf::Color::Red);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
                     blobs.pop_back(); // remove user blob
+                    popup1.shown = false;
+                    popup2.shown = false;
+                    popup3.shown = false;
 
                     userHoursInput = "";
                     userMinutesInput = "";
                     userHoursText.setString("");
                     userMinutesText.setString("");
                 } else if (submitClicked && hasInput) {
+                    submitted = true;
                     if (userBlobExists && !blobs.empty())
                         blobs.pop_back(); // if the user tries to enter a new blob, remove their previous blob
 
@@ -759,6 +814,16 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
         }
         for (auto &label: keyDotLabels) {
             window.draw(label);
+        }
+        if (popup1.shown) {
+            window.draw(popup1.text);
+        }
+
+        if (popup2.shown) {
+            window.draw(popup2.text);
+        }
+        if (popup2.shown) {
+            window.draw(popup3.text);
         }
 
         window.display();

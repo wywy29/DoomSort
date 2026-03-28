@@ -225,10 +225,10 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
     // split into prompt1 and prompt2 to fit inside the left box
     sf::Text prompt1(font);
     sf::Text prompt2(font);
-    prompt1.setString("What is your average daily");
-    prompt2.setString("screen time on your phone?");
-    prompt1.setCharacterSize(20);
-    prompt2.setCharacterSize(20);
+    prompt1.setString("What's your average daily");
+    prompt2.setString("phone screen time?");
+    prompt1.setCharacterSize(18);
+    prompt2.setCharacterSize(18);
     prompt1.setFillColor(sf::Color::White);
     prompt2.setFillColor(sf::Color::White);
     auto leftBoxPos = userInputBox.getPosition();

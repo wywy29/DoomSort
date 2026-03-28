@@ -288,13 +288,13 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
     float keyStartingY = resetBox.getPosition().y + 60.f;
     std::vector<std::pair<sf::Color, std::string>> keyItems = {
-        {sf::Color(50, 255, 25), "0-1 hr"},
-        {sf::Color(0, 255, 255), "1-2 hrs"},
-        {sf::Color(25, 100, 255), "2-4 hrs"},
-        {sf::Color(255, 25, 150), "4-6 hrs"},
-        {sf::Color(255, 255, 0), "6-8 hrs"},
-        {sf::Color(255, 125, 0), "8-10 hrs"},
-        {sf::Color(255, 25, 25), "10+ hrs"}
+        {sf::Color(50, 255, 25, 155), "0-1 hr"},
+        {sf::Color(0, 255, 255, 155), "1-2 hrs"},
+        {sf::Color(25, 100, 255, 155), "2-4 hrs"},
+        {sf::Color(255, 25, 150, 155), "4-6 hrs"},
+        {sf::Color(255, 255, 0, 155), "6-8 hrs"},
+        {sf::Color(255, 125, 0, 155), "8-10 hrs"},
+        {sf::Color(255, 25, 25, 155), "10+ hrs"}
     };
 
     std::vector<float> dotsRadii = {1.5f, 2.5f, 5.f, 6.f, 7.f, 8.f, 9.f};

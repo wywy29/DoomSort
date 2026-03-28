@@ -232,9 +232,22 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         if (abs(vx) < 0.1f) vx = vx < 0 ? -0.25f : 0.25f;
         if (abs(vy) < 0.1f) vy = vy < 0 ? -0.25f : 0.25f;
 
-        blobs.push_back(Blob(radius, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
+        //Update radius of smaller blobs to appear large enough to be seen, and larger blobs unchanged
+        float displayedRadius = radius;
+        if (radius >= 0.0 && radius <= 1.0) {
+            displayedRadius *= 20.0;
+        }
+        else if (radius > 1.0 && radius <= 2.0) {
+            displayedRadius *= 5.0;
+        }
+        else if (radius > 2.0 && radius <= 4.0) {
+            displayedRadius *= 2.0;
+        }
 
-        //Color blobs (neon-colors) based on their screen time/radius values
+        //Add blob to vector
+        blobs.push_back(Blob(displayedRadius, sf::Vector2f(x, y), sf::Vector2f(vx, vy)));
+
+        //Color blobs (neon-colors) based on their screen time/original radius values
         int r, g, b = 0;
 
         if (radius >= 0.0 && radius <= 1.0) { //Neon-Green: Excellent
@@ -262,12 +275,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
             g = 255;
             b = 0;
         }
-        else if (radius > 8.0 && radius <= 12.0) { //Neon-Orange: Bad/Poor
+        else if (radius > 8.0 && radius <= 10.0) { //Neon-Orange: Bad/Poor
             r = 255;
             g = 125;
             b = 0;
         }
-        else if (radius > 12.0) { //Neon-Red: Dangerous
+        else if (radius > 10.0) { //Neon-Red: Dangerous
             r = 255;
             g = 25;
             b = 25;

@@ -501,7 +501,12 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
                     sf::Vector2f spawnPos = {blobBounds.getPosition().x + blobBoundsSize.x / 2.f,
                                              blobBounds.getPosition().y + blobBoundsSize.y / 2.f};
 
-                    sf::Color userColor;
+                    sf::Color userColor = determineColor(totalTime, 150);
+                    blobs.push_back(Blob(totalTime + 3.5f, spawnPos, sf::Vector2f(1.5f, 1.5f)));
+                    blobs.back().shape.setFillColor(userColor);
+                    blobs.back().shape.setOutlineColor(sf::Color::White);
+                    blobs.back().shape.setOutlineThickness(2);
+
                 } else {
                     hoursClicked = false;
                     minutesClicked = false;
@@ -587,6 +592,15 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
         bool quickSortHovered = quickSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
         bool mergeSortHovered = mergeSortBox.getGlobalBounds().contains(sf::Vector2f(pos));
         bool resetHovered = resetBox.getGlobalBounds().contains(sf::Vector2f(pos));
+        bool submitHovered = submitBox.getGlobalBounds().contains(sf::Vector2f(pos));
+
+        if (submitClicked) {
+            submitBox.setOutlineColor(sf::Color::Red);
+        } else if (submitHovered) {
+            submitBox.setOutlineColor((sf::Color(139, 0, 0)));
+        } else {
+            submitBox.setOutlineColor(sf::Color::White);
+        }
 
         if (hoursClicked) {
             userHours.setOutlineColor(sf::Color::Red);
@@ -639,6 +653,10 @@ void ProjectUI::drawWindow(sf::RenderWindow& window, std::vector<float> screenTi
 
         if (resetClicked) {
             resetBox.setOutlineColor(sf::Color::Red);
+            if (hasInput) {
+                submitClicked = false;
+                submitBox.setOutlineColor(sf::Color::White);
+            }
         }
         else if (resetHovered) {
             resetBox.setOutlineColor(sf::Color(139,0,0));

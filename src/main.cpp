@@ -52,10 +52,10 @@ int main() {
         proj.drawWindow(window, resizedData);
     }
 
-    //Print resize function results
-    for(float d : resizedData) {
+    //Test for printing resize function results
+    /*for(float d : resizedData) {
         cout << d << endl;
-    }
+    }*/
 
     //Compilation command for program through command prompt:
     //g++.exe main.cpp -o DoomSort -I"C:\SFML\include" -L"C:\SFML\lib" -lsfml-graphics -lsfml-window -lsfml-system

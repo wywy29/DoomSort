@@ -4,6 +4,9 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <cmath>
+#include <chrono>
+using namespace std::chrono;
 
 //Blob constructor: Create visual blobs with given screen data value as radius, position, and velocity
 Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
@@ -98,8 +101,6 @@ void fadeOutEffect(sf::RenderWindow &window) {
     }
 }
 
-//Some helper functions to make the key!
-
 //Make dots to be used for color key
 sf::CircleShape makeKeyDot(sf::Color color, float x, float y, float radius) {
     sf::CircleShape dot(radius);
@@ -123,6 +124,19 @@ sf::Text keyLabel(const sf::Font &font, std::string txt, float x, float y) {
     text.setFillColor(sf::Color::White);
     text.setPosition({x + 6.f, y - 3.f});
     return text;
+}
+
+//Function to help display duration text for either merge or quick sort
+void displayDurationText(sf::Text& durationText, const sf::RectangleShape& blobBounds, const sf::Vector2f& blobBoundsSize,
+                        double sortDuration, bool& showDuration) {
+    double roundedTime = std::round(sortDuration * 1000.0) / 1000.0; //round to 3 decimal places
+
+    durationText.setString("Time for Sort: " + std::to_string(roundedTime) + " seconds");
+    durationText.setCharacterSize(18);
+    durationText.setFillColor(sf::Color::White);
+    durationText.setPosition({blobBounds.getPosition().x + 20.f, blobBounds.getPosition().y + blobBoundsSize.y - 40.f});
+
+    showDuration = true;
 }
 
 //Display the homescreen UI
@@ -446,6 +460,15 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
     bool submitted = false; // to check if user submits in order to determine if they can click one of the sort boxes
     bool sorted = false; // prevent being able to submit after sorting
 
+    //Declare duration and chrono variables for sorting times
+    double sortDuration;
+    high_resolution_clock::time_point start;
+    high_resolution_clock::time_point end;
+
+    //Duration Text
+    sf::Text durationText(font);
+    bool showDuration = false;
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
@@ -512,6 +535,9 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     userHours.setOutlineColor(sf::Color::White);
                     submitBox.setOutlineColor(sf::Color::White);
 
+                    //Use timer with chrono to count how long it took to sort data
+                    //Source: https://cplusplus.com/reference/chrono/
+
                     if (mergeSortClicked) {
                         mergeSortClicked = true;
                         quickSortClicked = false;
@@ -519,7 +545,17 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                         quickSortBox.setOutlineColor(sf::Color::White);
                         mergeSortBox.setOutlineColor(sf::Color::Red);
 
-                        mergeSort(blobs);
+                        start = high_resolution_clock::now();
+
+                        mergeSort(blobs); //Call merge sort!
+
+                        end = high_resolution_clock::now();
+
+                        sortDuration = duration_cast<duration<double>>(end - start).count();
+
+                        //Use duration to print duration box
+                        displayDurationText(durationText, blobBounds, blobBoundsSize, sortDuration, showDuration);
+
                     } else if (quickSortClicked) {
                         mergeSortClicked = false;
                         quickSortClicked = true;
@@ -527,7 +563,16 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                         quickSortBox.setOutlineColor(sf::Color::Red);
                         mergeSortBox.setOutlineColor(sf::Color::White);
 
-                        quickSort(blobs);
+                        start = high_resolution_clock::now();
+
+                        quickSort(blobs); //Call quick sort!
+
+                        end = high_resolution_clock::now();
+
+                        sortDuration = duration_cast<duration<double>>(end - start).count();
+
+                        //Use duration to print duration box
+                        displayDurationText(durationText, blobBounds, blobBoundsSize, sortDuration, showDuration);
                     }
 
                     float rowX = blobBounds.getPosition().x + 20.f;
@@ -624,6 +669,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     submitted = false;
                     submitClicked = false;
                     sorted = false;
+                    showDuration = false;
                     resetBox.setOutlineColor(sf::Color::Red);
                     userMinutes.setOutlineColor(sf::Color::White);
                     userHours.setOutlineColor(sf::Color::White);
@@ -890,6 +936,10 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
         }
         if (popup3.shown) {
             window.draw(popup3.text);
+        }
+
+        if (showDuration == true) {
+            window.draw(durationText);
         }
 
         window.display();

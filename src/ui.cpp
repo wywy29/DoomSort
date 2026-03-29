@@ -129,9 +129,9 @@ sf::Text keyLabel(const sf::Font &font, std::string txt, float x, float y) {
 //Function to help display duration text for either merge or quick sort
 void displayDurationText(sf::Text& durationText, const sf::RectangleShape& blobBounds, const sf::Vector2f& blobBoundsSize,
                         double sortDuration, bool& showDuration) {
-    double roundedTime = std::round(sortDuration * 1000.0) / 1000.0; //round to 3 decimal places
+    double millisecondDuration = sortDuration * 1000.0; //will use milliseconds for closer comparison
 
-    durationText.setString("Time for Sort: " + std::to_string(roundedTime) + " seconds");
+    durationText.setString("Time for Sort: " + std::to_string(millisecondDuration) + " ms");
     durationText.setCharacterSize(18);
     durationText.setFillColor(sf::Color::White);
     durationText.setPosition({blobBounds.getPosition().x + 20.f, blobBounds.getPosition().y + blobBoundsSize.y - 40.f});

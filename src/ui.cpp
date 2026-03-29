@@ -566,11 +566,22 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                         // round to 2 decimal places
                         std::ostringstream stream;
                         stream << std::fixed << std::setprecision(2) << percentage;
+
+                        string popup3Str;
+                        if (percentage >= 75)
+                            popup3Str = "Go touch some grass";
+                        else if (percentage >= 50)
+                            popup3Str = "You are cooked";
+                        else if (percentage >= 25)
+                            popup3Str = "Average social media scroller";
+                        else if (percentage >= 0)
+                            popup3Str = "Your dopamine receptors are surprisingly healthy";
+
                         // update popup text
                         popup1.text.setString(
                                 "+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
-                        popup2.text.setString("You have more screen time than " + stream.str() + "% of the population");
-                        popup3.text.setString("qweweqw"); //undecided for now
+                        popup2.text.setString("You have more screen time than " + stream.str() + "% of the people");
+                        popup3.text.setString(popup3Str);
 
                         sf::FloatRect bounds = popup1.text.getGlobalBounds();
                         popup1.text.setPosition(

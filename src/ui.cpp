@@ -493,23 +493,41 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
                 }
                 // users must have an input to be able to click sort boxes
-                else if (quickSortClicked && submitted) {
-                    quickSortClicked = true;
-                    hoursClicked = false;
-                    minutesClicked = false;
-                    mergeSortClicked = false;
-                    resetClicked = false;
-                    submitClicked = false;
-                    submitted = false;
-                    sorted = true;
-                    resetBox.setOutlineColor(sf::Color::White);
-                    userMinutes.setOutlineColor(sf::Color::White);
-                    userHours.setOutlineColor(sf::Color::White);
-                    quickSortBox.setOutlineColor(sf::Color::Red);
-                    mergeSortBox.setOutlineColor(sf::Color::White);
-                    submitBox.setOutlineColor(sf::Color::White);
+                else if (mergeSortClicked || quickSortClicked) {
+                    if (mergeSortClicked) {
+                        mergeSortClicked = true;
+                        quickSortClicked = true;
+                        hoursClicked = false;
+                        minutesClicked = false;
+                        quickSortClicked = false;
+                        resetClicked = false;
+                        sorted = true;
+                        submitted = false;
+                        resetBox.setOutlineColor(sf::Color::White);
+                        userMinutes.setOutlineColor(sf::Color::White);
+                        userHours.setOutlineColor(sf::Color::White);
+                        quickSortBox.setOutlineColor(sf::Color::White);
+                        mergeSortBox.setOutlineColor(sf::Color::Red);
 
-                    quickSort(blobs);
+                        mergeSort(blobs);
+                    } else if (quickSortClicked) {
+                        mergeSortClicked = false;
+                        quickSortClicked = true;
+                        hoursClicked = false;
+                        minutesClicked = false;
+                        quickSortClicked = false;
+                        resetClicked = false;
+                        sorted = true;
+                        submitted = false;
+                        resetBox.setOutlineColor(sf::Color::White);
+                        userMinutes.setOutlineColor(sf::Color::White);
+                        userHours.setOutlineColor(sf::Color::White);
+                        quickSortBox.setOutlineColor(sf::Color::Red);
+                        mergeSortBox.setOutlineColor(sf::Color::White);
+
+                        quickSort(blobs);
+                    }
+
                     float rowX = blobBounds.getPosition().x + 20.f;
                     float rowY = blobBounds.getPosition().y + 20.f;
                     float x = rowX;
@@ -538,79 +556,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
                     float totalTime = h + (m / 60.f);
 
-                    // myopia increases by 17 pct per additonal hr
-                    int myopiaRisk = int(totalTime * 17);
-                    int belowUserInput = 0;
-                    for (int i = 0; i < screenTimes.size(); i++) {
-                        if (screenTimes[i] < totalTime) {
-                            belowUserInput++;
-                        }
-                    }
-                    float percentage = 0;
-                    if (!screenTimes.empty()) {
-                        percentage = (100.f* belowUserInput / screenTimes.size());
-                    }
-                    // round to 2 decimal places
-                    std::ostringstream stream;
-                    stream << std::fixed << std::setprecision(2) << percentage;
-                    // update popup text
-                    popup1.text.setString("+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
-                    popup2.text.setString("You have more screen time than " + stream.str() + "% of the population");
-                    popup3.text.setString("qweweqw"); //undecided for now
-
-                    sf::FloatRect bounds = popup1.text.getGlobalBounds();
-                    popup1.text.setPosition({blobBounds.getPosition().x-240.f, blobBounds.getPosition().y-40.f});
-                    popup2.text.setPosition({blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y-40.f});
-                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f}); //
-\
-                    popup1.shown = true;
-                    popup2.shown = true;
-                    popup3.shown = true;
-                } else if (mergeSortClicked && submitted) {
-                    mergeSortClicked = true;
-                    hoursClicked = false;
-                    minutesClicked = false;
-                    quickSortClicked = false;
-                    resetClicked = false;
-                    sorted = true;
-                    submitted = false;
-                    resetBox.setOutlineColor(sf::Color::White);
-                    userMinutes.setOutlineColor(sf::Color::White);
-                    userHours.setOutlineColor(sf::Color::White);
-                    quickSortBox.setOutlineColor(sf::Color::White);
-                    mergeSortBox.setOutlineColor(sf::Color::Red);
-
-                    mergeSort(blobs);
-                    float rowX = blobBounds.getPosition().x + 20.f;
-                    float rowY = blobBounds.getPosition().y + 20.f;
-                    float x = rowX;
-                    float y = rowY;
-                    float tallestBlob = 0.f;
-
-                    for (Blob &blob : blobs) {
-                        float diameter = blob.radius * 2.f;
-                        if (x + diameter > rowX + blobBoundsSize.x - 60.f) {
-                            x = rowX;
-                            y += tallestBlob + 6.f;
-                            tallestBlob = 0.f;
-                        }
-                        blob.shape.setPosition({x, y});
-                        blob.velocity = {0.f, 0.f}; // make them stop moving
-                        x += diameter + 6.f;
-                        if (diameter > tallestBlob) {
-                            tallestBlob = diameter;
-                        }
-                    }
-
-
-                    //popups
-                    bool shown = true;
-
-                    float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
-                    float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
-                    float totalTime = h + (m / 60.f);
-
-                    // myopia increases by 17 pct per additonal hr
+                    // myopia increases by 17 pct per additional hr
                     int myopiaRisk = int(totalTime * 17);
                     int belowUserInput = 0;
                     for (int i = 0; i < screenTimes.size(); i++) {
@@ -639,10 +585,15 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     popup2.shown = true;
                     popup3.shown = true;
                 } else if (resetClicked) {
-                    if (userBlobExists && !blobs.empty()) {
-                        blobs.pop_back();
-                        userBlobExists = false;
+                    blobs.clear(); // after sorting popping back doesn't always delete the user's blob
+                    userBlobExists = false;
+
+                    for (int i = 0; i < screenTimes.size(); i++) {
+                        float radius = screenTimes[i];
+                        blobs.push_back(Blob(radius + 3.5, getRandomPos(blobBounds, blobBoundsSize, radius), getRandomVelocity()));
+                        blobs.back().shape.setFillColor(determineColor(radius, 150));
                     }
+
                     mergeSortClicked = false;
                     hoursClicked = false;
                     minutesClicked = false;
@@ -692,13 +643,10 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     quickSortBox.setOutlineColor(sf::Color::White);
                     mergeSortBox.setOutlineColor(sf::Color::White);
 
-
-
                     // create new blob for user
                     float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
                     float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
                     float totalTime = h + (m / 60.f);
-
 
                     sf::Vector2f spawnPos = {
                         blobBounds.getPosition().x + blobBoundsSize.x / 2.f,
@@ -708,7 +656,6 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
                     blobs.push_back(Blob(totalTime + 3.5f, spawnPos, getRandomVelocity()));
                     userBlobExists = true;
-
 
                     blobs.back().shape.setFillColor(userColor);
                     blobs.back().shape.setOutlineColor(sf::Color::White);

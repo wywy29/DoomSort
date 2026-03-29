@@ -551,39 +551,48 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
                     //popups
                     bool shown = true;
+                    if (userBlobExists) {
+                        float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
+                        float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
+                        float totalTime = h + (m / 60.f);
 
-                    float h = userHoursInput.empty() ? 0.f : std::stof(userHoursInput);
-                    float m = userMinutesInput.empty() ? 0.f : std::stof(userMinutesInput);
-                    float totalTime = h + (m / 60.f);
-
-                    // myopia increases by 17 pct per additional hr
-                    int myopiaRisk = int(totalTime * 17);
-                    int belowUserInput = 0;
-                    for (int i = 0; i < screenTimes.size(); i++) {
-                        if (screenTimes[i] < totalTime) {
-                            belowUserInput++;
+                        // myopia increases by 17 pct per additional hr
+                        int myopiaRisk = int(totalTime * 17);
+                        int belowUserInput = 0;
+                        for (int i = 0; i < screenTimes.size(); i++) {
+                            if (screenTimes[i] < totalTime) {
+                                belowUserInput++;
+                            }
                         }
-                    }
-                    float percentage = 0;
-                    if (!screenTimes.empty()) {
-                        percentage = (100.f* belowUserInput / screenTimes.size());
-                    }
-                    // round to 2 decimal places
-                    std::ostringstream stream;
-                    stream << std::fixed << std::setprecision(2) << percentage;
-                    // update popup text
-                    popup1.text.setString("+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
-                    popup2.text.setString("You have more screen time than " + stream.str() + "% of the population");
-                    popup3.text.setString("qweweqw"); //undecided for now
+                        float percentage = 0;
+                        if (!screenTimes.empty()) {
+                            percentage = (100.f * belowUserInput / screenTimes.size());
+                        }
+                        // round to 2 decimal places
+                        std::ostringstream stream;
+                        stream << std::fixed << std::setprecision(2) << percentage;
+                        // update popup text
+                        popup1.text.setString(
+                                "+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
+                        popup2.text.setString("You have more screen time than " + stream.str() + "% of the population");
+                        popup3.text.setString("qweweqw"); //undecided for now
 
-                    sf::FloatRect bounds = popup1.text.getGlobalBounds();
-                    popup1.text.setPosition({blobBounds.getPosition().x-240.f, blobBounds.getPosition().y-40.f});
-                    popup2.text.setPosition({blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y-40.f});
-                    popup3.text.setPosition({blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f});
+                        sf::FloatRect bounds = popup1.text.getGlobalBounds();
+                        popup1.text.setPosition(
+                                {blobBounds.getPosition().x - 240.f, blobBounds.getPosition().y - 40.f});
+                        popup2.text.setPosition(
+                                {blobBounds.getPosition().x + 370.f, blobBounds.getPosition().y - 40.f});
+                        popup3.text.setPosition(
+                                {blobBounds.getPosition().x + 140.f, blobBounds.getPosition().y + 490.f});
 
-                    popup1.shown = true;
-                    popup2.shown = true;
-                    popup3.shown = true;
+                        popup1.shown = true;
+                        popup2.shown = true;
+                        popup3.shown = true;
+                    } else {
+                        popup1.shown = false;
+                        popup2.shown = false;
+                        popup3.shown = false;
+                    }
                 } else if (resetClicked) {
                     blobs.clear(); // after sorting popping back doesn't always delete the user's blob
                     userBlobExists = false;

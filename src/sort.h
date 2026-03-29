@@ -118,5 +118,3 @@ void runTest(function<void(vector<float>&)> sortFunction, int n) {
 
     cout << endl << endl << "Test " << (arr == copy ? "passed" : "failed") << endl;
 }
-
-

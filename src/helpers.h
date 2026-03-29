@@ -105,6 +105,6 @@ void resize(vector<float>& newVector, const vector<float>& data, int k) {
         }
     }
 
-    //New vector of 100 blobs will be stored as the centroids
+    //New vector made up of 100 blobs will be stored as the centroids
     newVector = centroids;
 }

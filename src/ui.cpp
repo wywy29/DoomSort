@@ -5,7 +5,6 @@
 #include <sstream>
 #include <iomanip>
 
-
 //Blob constructor: Create visual blobs with given screen data value as radius, position, and velocity
 Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
     this->radius = radius;

@@ -5,6 +5,7 @@
 #include <random>
 using namespace std;
 
+//Determine how spread out each screen time data value is in dataset
 float calculateStandardDeviation(const vector<float>& numbers) {
     int n = numbers.size();
     double sum = 0.0;
@@ -19,6 +20,7 @@ float calculateStandardDeviation(const vector<float>& numbers) {
     return static_cast<float>(sqrt(sumOfDiffSquared / n));
 }
 
+//Add remaining data points to vector to achieve minimum size using noise
 void augmentDataUsingNoise(vector<float>& numbers, int newSize) {
     float noise = 0.1f * calculateStandardDeviation(numbers);
 
@@ -103,6 +105,6 @@ void resize(vector<float>& newVector, const vector<float>& data, int k) {
         }
     }
 
-    //New vector of 100 blobs will be stored as the centroids
+    //New vector made up of 100 blobs will be stored as the centroids
     newVector = centroids;
 }

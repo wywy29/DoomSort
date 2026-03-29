@@ -586,7 +586,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
 
                         // update popup text
                         popup1.text.setString(
-                                "+" + to_string(myopiaRisk) + "% chance of myopia based on your screentime");
+                                "+" + to_string(myopiaRisk) + "% chance of myopia based on your screen time");
                         popup2.text.setString("You have more screen time than " + stream.str() + "% of the people");
                         popup3.text.setString(popup3Str);
 

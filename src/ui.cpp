@@ -494,18 +494,21 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                 }
                 // users must have an input to be able to click sort boxes
                 else if (mergeSortClicked || quickSortClicked) {
+                    hoursClicked = false;
+                    minutesClicked = false;
+                    resetClicked = false;
+                    sorted = true;
+                    submitted = false;
+
+                    resetBox.setOutlineColor(sf::Color::White);
+                    userMinutes.setOutlineColor(sf::Color::White);
+                    userHours.setOutlineColor(sf::Color::White);
+                    submitBox.setOutlineColor(sf::Color::White);
+
                     if (mergeSortClicked) {
                         mergeSortClicked = true;
-                        quickSortClicked = true;
-                        hoursClicked = false;
-                        minutesClicked = false;
                         quickSortClicked = false;
-                        resetClicked = false;
-                        sorted = true;
-                        submitted = false;
-                        resetBox.setOutlineColor(sf::Color::White);
-                        userMinutes.setOutlineColor(sf::Color::White);
-                        userHours.setOutlineColor(sf::Color::White);
+
                         quickSortBox.setOutlineColor(sf::Color::White);
                         mergeSortBox.setOutlineColor(sf::Color::Red);
 
@@ -513,15 +516,7 @@ void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTi
                     } else if (quickSortClicked) {
                         mergeSortClicked = false;
                         quickSortClicked = true;
-                        hoursClicked = false;
-                        minutesClicked = false;
-                        quickSortClicked = false;
-                        resetClicked = false;
-                        sorted = true;
-                        submitted = false;
-                        resetBox.setOutlineColor(sf::Color::White);
-                        userMinutes.setOutlineColor(sf::Color::White);
-                        userHours.setOutlineColor(sf::Color::White);
+
                         quickSortBox.setOutlineColor(sf::Color::Red);
                         mergeSortBox.setOutlineColor(sf::Color::White);
 

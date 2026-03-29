@@ -130,8 +130,14 @@ sf::Text keyLabel(const sf::Font &font, std::string txt, float x, float y) {
 void displayDurationText(sf::Text& durationText, const sf::RectangleShape& blobBounds, const sf::Vector2f& blobBoundsSize,
                         double sortDuration, bool& showDuration) {
     double millisecondDuration = sortDuration * 1000.0; //will use milliseconds for closer comparison
+    std::string text = std::to_string(millisecondDuration);
 
-    durationText.setString("Time for Sort: " + std::to_string(millisecondDuration) + " ms");
+    //Remove any trailing zeros or decimal points
+    text.erase(text.find_last_not_of('0') + 1, std::string::npos);
+    text.erase(text.find_last_not_of('.') + 1, std::string::npos);
+
+    //Set text for duration
+    durationText.setString("Time for Sort: " + text + " ms");
     durationText.setCharacterSize(18);
     durationText.setFillColor(sf::Color::White);
     durationText.setPosition({blobBounds.getPosition().x + 20.f, blobBounds.getPosition().y + blobBoundsSize.y - 40.f});

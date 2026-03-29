@@ -1,14 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-//Simple home screen, which will just contain a button to go to the actual project
+// simple home screen, will just contain a button to go to the actual project
 class HomeScreenUI {
     public:
     HomeScreenUI() = default;
     bool show(sf::RenderWindow& window);
 };
 
-//The actual project, which will contain the blobs, buttons, popups, etc.
+// actual project, will contain the blobs, buttons, popups, etc.
 class ProjectUI {
     public:
     ProjectUI() = default;

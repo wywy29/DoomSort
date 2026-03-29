@@ -21,5 +21,5 @@ should be placed in the correct position within the sorted lines. Popups will ap
 about your average daily screen time in comparison to the dataset, the increased chances of getting myopia, and if you should
 touch grass or not. 
 
-The reset button resets to it's initial state. In other words, the user input for the hours and minutes boxes are cleared,
+The reset button resets the graphical UI to it's initial state. In other words, the user input for the hours and minutes boxes are cleared,
 the blobs are unsorted and back to their floating states, the user's blob are removed, and the popups are turned invisible. 

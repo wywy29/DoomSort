@@ -6,7 +6,7 @@
 #include <iomanip>
 
 
-//Blob constructor
+//Blob constructor: Create visual blobs with given screen data value as radius, position, and velocity
 Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
     this->radius = radius;
     shape.setRadius(radius);
@@ -14,6 +14,7 @@ Blob::Blob(float radius, sf::Vector2f pos, sf::Vector2f velocity) {
     this->velocity = velocity;
 }
 
+//Popup struct: Create popup text messages displayed after sorting in the program
 struct Popup {
     sf::Text text;
     bool shown; // popups should appear after sort, so if its sorted, the popups will be shown (true)
@@ -24,7 +25,7 @@ struct Popup {
     }
 };
 
-
+//Generate a random position inside the main box in program to make sure they don't escape the box
 sf::Vector2f getRandomPos(const sf::RectangleShape& blobBounds, const sf::Vector2f blobBoundsSize, float radius) {
     float minX = blobBounds.getPosition().x + 5.f;
     float maxX = blobBounds.getPosition().x + blobBoundsSize.x - (radius * 2.f) - 5.f;
@@ -37,6 +38,7 @@ sf::Vector2f getRandomPos(const sf::RectangleShape& blobBounds, const sf::Vector
     return sf::Vector2f({x, y});
 }
 
+//Assign colors based on screen time/size of blob
 sf::Color determineColor(float radius, int opacity) {
     // color blobs (neon-colors) based on their screen time/original radius values
     int r, g, b;
@@ -66,6 +68,7 @@ sf::Color determineColor(float radius, int opacity) {
     return sf::Color(r, g, b, opacity);
 }
 
+//Give each blob random speed and direction
 sf::Vector2f getRandomVelocity() {
     // randomly give them velocity between -2 and 2
     float vx = (rand() % 401 - 200) / 100.f;
@@ -77,7 +80,7 @@ sf::Vector2f getRandomVelocity() {
     return sf::Vector2f({vx, vy});
 }
 
-// transition between homescreen and project (only really works for black background to black background for now)
+//Transition between homescreen and project
 void fadeOutEffect(sf::RenderWindow &window) {
     sf::Texture currentWin(window.getSize());
     currentWin.update(window);
@@ -96,7 +99,9 @@ void fadeOutEffect(sf::RenderWindow &window) {
     }
 }
 
-// some helper functions to make the key!
+//Some helper functions to make the key!
+
+//Make dots to be used for color key
 sf::CircleShape makeKeyDot(sf::Color color, float x, float y, float radius) {
     sf::CircleShape dot(radius);
     dot.setFillColor(color);
@@ -111,6 +116,7 @@ sf::CircleShape makeKeyDot(sf::Color color, float x, float y, float radius) {
     return dot;
 }
 
+//Label the key for program
 sf::Text keyLabel(const sf::Font &font, std::string txt, float x, float y) {
     sf::Text text(font);
     text.setString(txt);
@@ -120,6 +126,7 @@ sf::Text keyLabel(const sf::Font &font, std::string txt, float x, float y) {
     return text;
 }
 
+//Display the homescreen UI
 bool HomeScreenUI::show(sf::RenderWindow &window) {
     sf::Font boldFont;
     // you guys can more fonts to the resources folder and change this font if you'd like
@@ -194,6 +201,7 @@ bool HomeScreenUI::show(sf::RenderWindow &window) {
     return false;
 }
 
+//Main UI for program
 void ProjectUI::drawWindow(sf::RenderWindow &window, std::vector<float> screenTimes) {
     window.setFramerateLimit(60); // frames per second fixed so the blobs move at the same velocity for everyone
 

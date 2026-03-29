@@ -8,6 +8,7 @@
 #include "ui.h"
 using namespace std;
 
+//Quicksort Helper for partitioning the vector using pivot element
 int partition(vector<Blob>& arr, int low, int high) {
     int mid = low + (high - low) / 2;
     swap(arr[low], arr[mid]);
@@ -28,7 +29,7 @@ int partition(vector<Blob>& arr, int low, int high) {
         j--;
     }
 }
-
+//Helper for quicksort using recursion
 void quickSortHelper(vector<Blob>& arr, int low, int high) {
     if (low < high) {
         int p = partition(arr, low, high);
@@ -38,10 +39,12 @@ void quickSortHelper(vector<Blob>& arr, int low, int high) {
     }
 }
 
+//Quick Sort function, uses helper to achieve purpose
 void quickSort(vector<Blob>& arr) {
     quickSortHelper(arr, 0, arr.size() - 1);
 }
 
+//Merge sort helper that merges two halves of vector into one whole section
 void merge(vector<Blob>& arr, int left, int mid, int right) {
     vector<Blob> leftTemp(arr.begin() + left, arr.begin() + mid + 1);
     vector<Blob> rightTemp(arr.begin() + mid + 1, arr.begin() + right + 1);
@@ -74,6 +77,7 @@ void merge(vector<Blob>& arr, int left, int mid, int right) {
     }
 }
 
+//Merge Sort helper that uses recursion
 void mergeSortHelper(vector<Blob>& arr, int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
@@ -83,6 +87,7 @@ void mergeSortHelper(vector<Blob>& arr, int left, int right) {
     }
 }
 
+//Merge Sort function that calls helper to do the sorting
 void mergeSort(vector<Blob>& arr) {
     mergeSortHelper(arr, 0, arr.size() - 1);
 }

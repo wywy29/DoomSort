@@ -11,7 +11,7 @@ The box with a grayish "min" label, is for the minutes of your average daily pho
 These two boxes are to be clicked on, and filled with the hours and minutes of your average daily phone screen time. 
 At least 1 of these 2 boxes must be filled with a number in order for any other buttons to be used. 
 
-Afterward input an acceptable number into 1 of the 2 boxes (h or min), click submit, to create a blob
+Afterward, input an acceptable number into 1 of the 2 boxes (h or min), click submit, to create a blob
 that represents your average daily phone screen time. This also allows you to use the other buttons.
 Each blob has colors/size that represent with the screen time amount they represent. Each blob is the average daily phone screen time
 of 1,000 people. Your blob will have a white outline around it. 
